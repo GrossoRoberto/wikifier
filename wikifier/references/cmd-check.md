@@ -15,7 +15,7 @@ Read-only self-diagnosis. It never writes anything: no files, no log entry.
 | 4 | `index.md` header present; counts (`Pagine totali`, `Sorgenti raw`) match reality | ⚠️ |
 | 5 | Every page under `wiki/` is listed in `index.md` | ⚠️ |
 | 6 | Every link in `index.md` resolves to an existing file (no links into `trash/`) | ❌ |
-| 7 | Every `raw/` folder is listed in `index.md`; folder names follow `YYYY-MM-DD_description` | ⚠️ |
+| 7 | Every raw source listed in `index.md` still exists in `raw/` (❌ if missing). Unlisted `raw/` folders are NOT a problem: report them as info "pending ingest: n". Folder names follow `YYYY-MM-DD_description` (⚠️ if not) | ❌ / ⚠️ |
 | 8 | Page files and category folders follow naming (lowercase, hyphens, `.md`); depth ≤ 2 levels | ⚠️ |
 | 9 | `log.md` entries all start with `## [YYYY-MM-DD] <type> | ...` | ⚠️ |
 | 10 | Stray files outside the expected layout (report only, never move). Do not report `.gitkeep` files or `infowiki.md` in the root. Report `infowiki.md` found inside `raw/` or `wiki/` as misplaced (it would be mistaken for a source) | ⚠️ |

@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.2).** Phase 1 is implemented. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.3).** Phase 1 was field-tested once; `wiki-ingest` and `wiki-audit` are written and sandbox-tested only. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -16,8 +16,10 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | implemented |
 | `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | implemented |
 | `wiki-status` | Quick summary: pages, pending raw sources, last log entries | implemented |
-| `wiki-ingest`, `wiki-query`, `wiki-update` | Content operations | planned |
-| `wiki-merge`, `wiki-rename`, `wiki-delete`, `wiki-audit` | Maintenance and content audit | planned |
+| `wiki-ingest` | One raw source into cited wiki pages (plan approved first) | written, **not yet field-tested** |
+| `wiki-audit` | Read-only check of citations, uncited claims, contradictions | written, **not yet field-tested** |
+| `wiki-query`, `wiki-update` | Content operations | planned |
+| `wiki-merge`, `wiki-rename`, `wiki-delete` | Maintenance | planned |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -139,9 +141,12 @@ What was actually tested:
 
 - Static checks of the skill (frontmatter, description length, links between files, line endings) and of the state definitions S0-S4 on synthetic wikis, with a reference checker written by the author. This validates the *definitions*, not the model's behaviour.
 - One field test on Claude Desktop (a cloud session linked to a computer): activation from the description, S0 to draft to bootstrap to S4, `index.md`/`log.md` verified byte for byte. It led to the v1.1 fixes.
+- `scripts/verify_quotes.py` (quote exists in the raw file) tested on a synthetic wiki with seeded errors (`tests/test_wikifier.py`, run `python tests/test_wikifier.py`). A field-test kit for ingest/audit is in `tests/field/`.
 
 Not tested or not verified:
 
+- `wiki-ingest` and `wiki-audit` behaviour with a real model: the procedures exist, but nobody has run them end to end yet. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
+- A fix in v1.3: a `raw/` folder not yet listed in the index used to make the wiki state S3 and block ingest; it is now "pending ingest" and the state stays S4.
 - `wiki-check err`, `wiki-status`, and the states S1 and S3 in the field.
 - Pi: tool names, permissions, mapped network drives, and whether project skills are also found in parent directories (two sources disagreed).
 - The Claude Desktop local Filesystem connector (the field test used a different toolset).
@@ -175,7 +180,7 @@ The skill was written from scratch from these descriptions; no code was copied. 
 
 **Cos'è:** una skill che crea e mantiene una wiki markdown secondo il pattern "LLM Wiki" di Karpathy. Ogni comando controlla prima se può girare nello stato attuale della wiki (S0-S4) e altrimenti si ferma con un errore chiaro.
 
-**Comandi disponibili (fase 1):** `wiki-init`, `wiki-check`, `wiki-check err`, `wiki-status`. Gli altri (`ingest`, `query`, `update`, `merge`, `rename`, `delete`, `audit`) sono pianificati e per ora rispondono "non implementato".
+**Comandi:** `wiki-init`, `wiki-check`, `wiki-check err`, `wiki-status` (testati sul campo una volta); `wiki-ingest` e `wiki-audit` (scritti e testati solo in sandbox, ancora da provare con un modello vero). Gli altri (`query`, `update`, `merge`, `rename`, `delete`) sono pianificati e per ora rispondono "non implementato".
 
 **Installazione:**
 - **Claude Desktop:** scarica `dist/wikifier.zip` e caricalo da *Impostazioni > Competenze > + > Carica una skill*.

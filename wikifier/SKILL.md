@@ -18,8 +18,10 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-check` | Read-only self-diagnosis | 1 | `references/cmd-check.md` |
 | `wiki-check err` | Check, then propose and apply repairs (with confirmation) | 1 | `references/cmd-check-err.md` |
 | `wiki-status` | Quick summary (pages, last operations, pending sources) | 1 | `references/cmd-status.md` |
-| `wiki-ingest`, `wiki-query`, `wiki-update` | Content operations | 2 | not implemented yet |
-| `wiki-merge`, `wiki-rename`, `wiki-delete`, `wiki-audit` | Maintenance | 3 | not implemented yet |
+| `wiki-ingest` | Turn one raw source into cited wiki pages (plan approved first) | 2 | `references/cmd-ingest.md` |
+| `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
+| `wiki-query`, `wiki-update` | Content operations | 2 | not implemented yet |
+| `wiki-merge`, `wiki-rename`, `wiki-delete` | Maintenance | 3 | not implemented yet |
 
 For a command marked "not implemented yet", say so plainly and stop. Never improvise its procedure.
 
@@ -47,7 +49,7 @@ For a command marked "not implemented yet", say so plainly and stop. Never impro
 ## Current limits
 
 - Wiki layout is provisionally the "v2.1" profile (`references/structure-v21.md`). It will be replaced after a dedicated design session; keep all layout knowledge in that file only.
-- Optional helper scripts (Claude Code only) are planned for a later phase. Everything here must work with file tools alone.
+- `scripts/verify_quotes.py` (stdlib Python) is an optional helper for ingest/audit where a shell exists (Claude Code, Pi). Without it, quotes are checked by reading. It proves a quote exists in the source, not that it supports the claim.
 
 ## Credits
 

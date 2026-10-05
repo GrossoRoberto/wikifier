@@ -66,6 +66,26 @@ aggiornato: YYYY-MM-DD
 
 Optional: `sorgenti` (list of raw paths), `importanza` (bassa|media|alta|critica), `stato` (bozza|verificato|archiviato), `tag`.
 
+## Citations (used by ingest and audit)
+
+Claims in a page body carry footnote references; definitions go at the bottom of the page. Straight double quotes, em dash `—` as separator:
+
+```markdown
+The pump runs at 1450 rpm.[^1] The service interval looks shorter than the vendor's.[^2]
+
+[^1]: raw/2026-10-01_pump-notes/notes.md — "nominal speed is 1450 rpm" (section 2)
+[^2]: [synthesis] raw/2026-10-01_pump-notes/notes.md, raw/2026-10-05_vendor/sheet.md — compared the two service intervals
+```
+
+- Quote: verbatim from the raw file, 4–25 words, copied not recalled. A check ignores only whitespace differences (case-sensitive, NFC).
+- Locator in parentheses: section, page, line or timestamp, as precise as the source allows.
+- Information not stated by the sources: `> ❓ DA VERIFICARE`.
+- Conflict between sources or with existing text (keep both, never overwrite):
+
+```markdown
+> ⚠️ CONTRADDIZIONE (YYYY-MM-DD): 1450 rpm[^1] ↔ 1480 rpm[^3]
+```
+
 ## Links
 
 Relative markdown links based on the file's own path (no `[[wikilinks]]`). Renaming or moving a page breaks inbound links.
