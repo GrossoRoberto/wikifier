@@ -99,7 +99,22 @@ confirmations: every-write
 | `language` | no (default `it`) | Language used with the user and in the wiki |
 | `confirmations` | no (default `every-write`) | `every-write` or `session-ok` |
 
-The skill looks for `infowiki.md` in, in order: the Project knowledge (Claude Desktop), a file attached to the chat, the directory the agent was launched from. It does not search elsewhere. If you don't have one yet, just run `wiki-init`: it interviews you and drafts it.
+### Role and location of `infowiki.md`
+
+`infowiki.md` identifies **one** wiki and holds **only variables**; procedures live in the skill. Keep one per wiki. It is **not** stored inside the wiki, because the skill needs it to know where the wiki is.
+
+| Where you work | Put `infowiki.md` here | How the skill finds it |
+|---|---|---|
+| Claude Desktop, chat **inside a Project** | In the **Project knowledge** | Injected into the chat context |
+| Claude Desktop, chat **outside a Project** | **Attach it to the chat** (each new chat needs it) | It is in the chat context |
+| Claude Code | In the **directory where you launch it** (working directory) | Looked up there; parent directories are not searched |
+| Pi and other agents | Same as Claude Code | Same |
+
+- If several copies exist, the order is: Project knowledge, chat attachment, launch directory. The first one found wins and the skill says which one it used.
+- It is tolerated in the wiki root (ignored by index and check), but never inside `raw/` or `wiki/`.
+- If it is not found, the state is S0 and the skill does not search anywhere else. Run `wiki-init` and it will interview you and draft the file.
+- Same wiki from several machines? Keep the same file and put the other machine's path in `path_alt`.
+- Field-tested so far: the chat-attachment route on Claude Desktop. The Project knowledge route, Claude Code and Pi are written from the documentation but not yet tried.
 
 > Path rules, validation and edge cases: [`wikifier/references/infowiki-template.md`](wikifier/references/infowiki-template.md).
 
@@ -167,6 +182,13 @@ The skill was written from scratch from these descriptions; no code was copied. 
 - **Claude Code:** copia l'intera cartella `wikifier/` (non solo il contenuto) in `~/.claude/skills/`. Uso: `/wikifier check`.
 - **Pi:** copia la cartella `wikifier/` in `~/.pi/agent/skills/` ed esegui `/reload`. Uso: `/skill:wikifier check`.
 
-**Configurazione:** un file `infowiki.md` con poche variabili (`project_name`, `path`, `path_alt`, `domain`, `language`, `confirmations`). Se non ce l'hai, lancia `wiki-init`: ti intervista e ne prepara una bozza.
+**Configurazione:** un file `infowiki.md` con poche variabili (`project_name`, `path`, `path_alt`, `domain`, `language`, `confirmations`). Identifica una sola wiki e non sta dentro la wiki. Se non ce l'hai, lancia `wiki-init`: ti intervista e ne prepara una bozza.
+
+**Dove metterlo:**
+- **Claude Desktop, chat in un Project:** nel Project knowledge.
+- **Claude Desktop, chat fuori da un Project:** allegalo alla chat (a ogni nuova chat).
+- **Claude Code e Pi:** nella cartella da cui lanci l'agente (non cerca nelle cartelle superiori).
+- Se ne esistono più copie vale la prima in quest'ordine: Project knowledge, allegato, cartella di lancio.
+- Provato sul campo finora: solo l'allegato in chat su Desktop.
 
 **Limiti:** è una versione iniziale. Non sono ancora stati provati sul campo `wiki-check err`, `wiki-status`, gli stati S1 e S3, né l'uso su Pi. La struttura delle cartelle ("v2.1") è provvisoria.

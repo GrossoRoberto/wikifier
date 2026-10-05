@@ -2,14 +2,24 @@
 
 `infowiki.md` holds ONLY a few variables that identify one wiki. No procedures, no conventions: those live in the skill. One `infowiki.md` per project.
 
+## Role
+
+`infowiki.md` identifies ONE wiki: its name, where it is, what it is about, and two behaviour settings. It holds variables only. All procedures and conventions live in the skill. Keep one `infowiki.md` per wiki (one per Project, or one per launch directory).
+
 ## Where it lives
 
-- **Claude Desktop:** as a file in the Project knowledge (it is injected into context). Never inside `raw/` or `wiki/`.
-- **A file attached to the current chat** is accepted too, if it is named `infowiki.md`. Say so when you use it.
-- **Claude Code / Pi / other agents:** in the directory the agent was launched from (its working directory). Do not walk up to parent directories.
-- If not found in these places: state S0 (see `preflight.md`). Do not search other folders.
+| Where you work | Put `infowiki.md` here | How the skill finds it |
+|---|---|---|
+| Claude Desktop, chat inside a Project | In the Project knowledge | It is injected into the chat context |
+| Claude Desktop, chat outside a Project | Attach it to the chat (each new chat needs it) | It is in the chat context |
+| Claude Code | In the directory where Claude Code is launched (its working directory) | Looked up there; parent directories are not searched |
+| Pi and other agents | Same as Claude Code | Same |
 
-Rule: the file must exist somewhere readable from the Project, the chat or the launch directory. Search those places actively before declaring S0. Being inside the wiki root is fine (tolerated, ignored by index and check), including when the launch directory is the root. Do not scan the rest of the filesystem (sandbox).
+- Search order when it exists in several places: Project knowledge, then chat attachment, then launch directory. Use the first one found, say which one, and mention the others.
+- It is tolerated in the wiki root (index and check ignore it), including when the launch directory is the root. It must NOT be inside `raw/` or `wiki/`.
+- Not found in any of these places: state S0 (see `preflight.md`). Do not scan the rest of the filesystem.
+- The file is not inside the wiki by design: the skill needs it to know where the wiki is.
+- Same wiki from several machines: keep the same file and put the other machine's path in `path_alt`.
 
 ## Template
 

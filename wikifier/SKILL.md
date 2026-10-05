@@ -25,7 +25,7 @@ For a command marked "not implemented yet", say so plainly and stop. Never impro
 
 ## Mandatory sequence for EVERY command
 
-1. **Locate `infowiki.md`** — see `references/infowiki-template.md`. Sources, in order: (a) Project knowledge/context (Claude Desktop), (b) a file attached to the current chat, (c) the directory the agent was launched from (Claude Code, Pi, other agents). Say which one you used. Look nowhere else.
+1. **Locate `infowiki.md`** — see `references/infowiki-template.md`. Sources, in order: (a) Project knowledge/context (Claude Desktop), (b) a file attached to the current chat, (c) the directory the agent was launched from (Claude Code, Pi, other agents). Use the first one found (if several exist, mention the others) and say which one you used. Look nowhere else.
 2. **Resolve the wiki root** with `path`, then `path_alt`; verify access with the tools in `references/tools-map.md`. Never assume or guess a path (not from a selected folder, not by "fixing" a malformed value): validate it per `infowiki-template.md` and ask the user when it is missing or invalid.
 3. **Run the preflight** in `references/preflight.md`: determine state S0–S4 and check that the command is allowed in that state.
 4. If not allowed, stop with the standard error (format in `preflight.md`). Do not partially execute.
