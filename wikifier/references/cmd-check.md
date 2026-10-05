@@ -1,0 +1,36 @@
+# wiki-check
+
+Read-only self-diagnosis. It never writes anything: no files, no log entry.
+
+## Procedure
+
+1. Run the full preflight (`preflight.md`), including the alignment check. Do not stop at the first failure: collect all findings up to the point where later checks become impossible (for example, if the root is unreachable, nothing below it can be checked).
+2. Run these checks and record each as ✅ / ⚠️ / ❌:
+
+| # | Check | Fail level |
+|---|---|---|
+| 1 | `infowiki.md` found, all required variables present; list unknown keys | ❌ missing/incomplete, ⚠️ unknown keys |
+| 2 | Root reachable (`path`, else `path_alt`); say which one is used | ❌ |
+| 3 | Required items exist: `index.md`, `log.md`, `raw/`, `wiki/`, `trash/` | ❌ each missing |
+| 4 | `index.md` header present; counts (`Pagine totali`, `Sorgenti raw`) match reality | ⚠️ |
+| 5 | Every page under `wiki/` is listed in `index.md` | ⚠️ |
+| 6 | Every link in `index.md` resolves to an existing file (no links into `trash/`) | ❌ |
+| 7 | Every `raw/` folder is listed in `index.md`; folder names follow `YYYY-MM-DD_description` | ⚠️ |
+| 8 | Page files and category folders follow naming (lowercase, hyphens, `.md`); depth ≤ 2 levels | ⚠️ |
+| 9 | `log.md` entries all start with `## [YYYY-MM-DD] <type> | ...` | ⚠️ |
+| 10 | Stray files outside the expected layout (report only, never move). Do not report `.gitkeep` files or `infowiki.md` in the root. Report `infowiki.md` found inside `raw/` or `wiki/` as misplaced (it would be mistaken for a source) | ⚠️ |
+
+Checks 5–9 need a populated wiki; on an empty one they pass trivially.
+This phase does not verify page content (contradictions, citations): that is `wiki-audit`.
+
+## Output (in the user's language, short)
+
+```
+State: S<n> — <one-line meaning>
+Root: <path used>
+✅ / ⚠️ / ❌ per check (only list the non-✅ ones in detail)
+Next step: <command>
+```
+
+Next-step mapping: S0 → `wiki-init` (draft mode); S1 → `wiki-init`; S2 or S3 → `wiki-check err`; S4 → nothing to do.
+Never claim a check passed if you did not run it: say "not verified".
