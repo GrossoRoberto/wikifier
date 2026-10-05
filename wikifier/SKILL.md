@@ -48,3 +48,7 @@ For a command marked "not implemented yet", say so plainly and stop. Never impro
 
 - Wiki layout is provisionally the "v2.1" profile (`references/structure-v21.md`). It will be replaced after a dedicated design session; keep all layout knowledge in that file only.
 - Optional helper scripts (Claude Code only) are planned for a later phase. Everything here must work with file tools alone.
+
+## Credits
+
+Pattern: Andrej Karpathy, "LLM Wiki" (https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). Command set inspired by kfchou/wiki-skills (https://github.com/kfchou/wiki-skills). Independent implementation; no code copied.

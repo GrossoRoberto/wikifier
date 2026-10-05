@@ -1,6 +1,6 @@
 # Wikifier
 
-An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintains a persistent, interlinked markdown wiki compiled by an LLM from immutable raw sources, following Andrej Karpathy's [LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) (raw sources / wiki / schema, plus `index.md` and `log.md`).
+An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintains a persistent, interlinked markdown wiki compiled by an LLM from immutable raw sources, following Andrej Karpathy's [LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) (raw sources / wiki / schema, plus `index.md` and `log.md`), with a command set inspired by [kfchou/wiki-skills](https://github.com/kfchou/wiki-skills). See [Credits](#credits).
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
@@ -139,7 +139,16 @@ Other, unrelated projects use the name "Wikifier" (for example [IronAdamant/wiki
 
 ## Credits
 
-Inspired by Karpathy's [llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) and by the command set of [kfchou/wiki-skills](https://github.com/kfchou/wiki-skills). The skill was written from scratch from their descriptions; no code was copied. Not affiliated with either.
+This project builds on two sources, and I am grateful to both:
+
+1. **Andrej Karpathy, [llm-wiki.md](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)** (gist, April 2026). The pattern itself: three layers (immutable raw sources, an LLM-maintained wiki, a schema that tells the LLM how to behave), the operations ingest / query / lint, and the two special files `index.md` (content catalog) and `log.md` (chronological record).
+2. **kfchou, [wiki-skills](https://github.com/kfchou/wiki-skills)** (MIT). A Claude Code plugin implementing the same pattern. It inspired the command set (`init`, `ingest`, `query`, `update`, `audit`, `merge`), the "ask before writing" behaviour, and the idea of a per-wiki configuration file that tells the skill where the wiki is (their `SCHEMA.md`; here it became `infowiki.md`).
+
+A [comment by wy-cats](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f?permalink_comment_id=6362239#gistcomment-6362239) on Karpathy's gist points out that "pending ingest" is better computed from the files than kept as a flag. `wiki-status` follows the same idea (pending sources are the `raw/` folders not yet listed in `index.md`).
+
+Specific to this project (not taken from either source): the self-diagnosis states S0-S4 with a command eligibility matrix, `wiki-check` / `wiki-check err` / `wiki-status`, the `infowiki.md` variables-only configuration, soft-delete to `trash/`, and the layout-agnostic structure profile.
+
+The skill was written from scratch from these descriptions; no code was copied. This project is not affiliated with either author.
 
 ## License
 
