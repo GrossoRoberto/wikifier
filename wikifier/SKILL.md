@@ -20,11 +20,10 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-status` | Quick summary (pages, last operations, pending sources) | 1 | `references/cmd-status.md` |
 | `wiki-ingest` | Turn one raw source into cited wiki pages (plan approved first) | 2 | `references/cmd-ingest.md` |
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
-| `wiki-query`, `wiki-update` | Content operations | 2 | not implemented yet |
+| `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | 2 | `references/cmd-query.md` |
 | `wiki-delete` | Soft-delete pages: move them into `trash/`, fix index and links (plan approved first) | 3 | `references/cmd-delete.md` |
-| `wiki-merge`, `wiki-rename` | Maintenance | 3 | not implemented yet |
 
-For a command marked "not implemented yet", say so plainly and stop. Never improvise its procedure.
+Any other `wiki-*` command is not part of Wikifier (for example update, merge, rename): say so plainly and stop. Never improvise a procedure.
 
 ## Mandatory sequence for EVERY command
 

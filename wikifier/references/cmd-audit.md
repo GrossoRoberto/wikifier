@@ -29,4 +29,4 @@ Not covered: <list>
 <one section per problem: page, footnote, status, evidence>
 ```
 
-Findings are proposals: this command never edits pages. Offer `wiki-update` (when available) or manual fixes. Do not claim the wiki is "correct": say which checks passed.
+Findings are proposals: this command never edits pages. Suggest manual fixes, or a new `wiki-ingest` when a source is missing. Do not claim the wiki is "correct": say which checks passed.

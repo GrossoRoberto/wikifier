@@ -30,7 +30,7 @@ Alignment check: every `*.md` under `wiki/` appears in `index.md`, every link in
 | `wiki-check err` | error | error → `wiki-init` | allowed | allowed | nothing to repair |
 | `wiki-status` | error | error | error → `wiki-check err` | allowed (warn index) | allowed |
 | read commands (`query`, `audit`) | error | error | error | allowed (warn index) | allowed |
-| write commands (`ingest`, `update`, `merge`, `rename`, `delete`) | error | error | error | error → `wiki-check err` | allowed |
+| write commands (`ingest`, `delete`) | error | error | error | error → `wiki-check err` | allowed |
 
 *Draft mode: no wiki is created; the skill proposes a filled `infowiki.md` (see `cmd-init.md`).
 

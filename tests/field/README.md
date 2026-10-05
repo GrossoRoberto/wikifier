@@ -26,3 +26,6 @@ Nothing written without approval; `raw/` unchanged; every claim in the report tr
 
 ## Optional source 3 (richer report)
 Copy `source3-maintenance-report.md` to `raw/2026-10-05_maintenance-report/report.md` and ingest it after sources 1 and 2. Expect: Pump A measured speed (1462 rpm) added next to the 1450 / 1480 values with a `CONTRADDIZIONE` block, not overwritten; Pump B (2890 rpm, 6120 h, past the 2000 h interval) as new content; "probabilmente il giunto è usurato" marked as an unverified hypothesis (`DA VERIFICARE`), not stated as fact; costs and seal model recorded as unknown, not invented; the electrical table read correctly (7,8 A and 14,2 A).
+
+## Test 6 - query
+After ingesting sources 1 and 2, ask: "A che velocità gira la pompa A?" Expect: both values with their pages, the `CONTRADDIZIONE` flagged (no value chosen), nothing written (no log entry, no new file). Then ask something the wiki does not contain (e.g. the pump's price): expect "the wiki does not say", no guess.

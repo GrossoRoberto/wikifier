@@ -49,7 +49,7 @@ Append-only: never modify previous entries. Each entry starts with a parseable p
 Reason / details.
 ```
 
-Entry types: `ingest`, `query`, `lint`, `update`, `delete`. First entry written by init: `## [date] update | bootstrap struttura iniziale`.
+Entry types: `ingest`, `update`, `delete` (`wiki-query` and `wiki-audit` write nothing, so they have no entry). First entry written by init: `## [date] update | bootstrap struttura iniziale`.
 
 Appending: the connector has no append tool. Use an exact-match edit (old text = last entry, new text = last entry + new entry) or read-modify-write. Both preserve earlier entries and LF line endings.
 
