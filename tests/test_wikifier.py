@@ -29,9 +29,16 @@ for f in list((SK/"references").glob("*.md")) + [SK/"SKILL.md", SCRIPT]:
 for f in (SK/"references").glob("*.md"):
     t = f.read_text(encoding="utf-8")
     check("192.168" not in t and "DatiLab" not in t, f"{f.name}: no personal data")
-for cmd in ("ingest", "audit"):
+for cmd in ("ingest", "audit", "delete"):
     check(f"cmd-{cmd}.md" in txt and "not implemented" not in
           [l for l in txt.splitlines() if f"`wiki-{cmd}`" in l][0], f"SKILL.md routes wiki-{cmd}")
+
+ing = (SK/"references/cmd-ingest.md").read_text(); dl = (SK/"references/cmd-delete.md").read_text()
+check("reading it is allowed" in txt.lower(), "SKILL.md: reading raw/ allowed")
+check("Approval covers every write listed in the plan" in ing, "ingest: plan approval covers writes")
+check("loose files" in ing and "mkdir" in ing, "ingest: loose files get ready commands")
+check("trash/" in dl and "Never `raw/`" in dl and "BOTH confirmation modes" in dl, "delete: trash only, never raw, plan always approved")
+check("approval covers every write" in txt, "SKILL.md: confirmation exception")
 
 # ---- 2. reference preflight ----
 REQ = ["index.md","log.md","raw","wiki","trash"]

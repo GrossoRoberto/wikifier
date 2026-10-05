@@ -10,7 +10,7 @@ Layout taken from the project's SCHEMA v2.1, tested on the field with the filesy
 ├── log.md            chronological, append-only record
 ├── raw/              immutable sources
 ├── wiki/             pages written and maintained by Claude
-└── trash/            soft-delete bin (ignored by everything)
+└── trash/            soft-delete bin (ignored by everything); names `YYYY-MM-DD_<category>_<file>.md`
 ```
 
 Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wiki/` allows at most 2 levels: `wiki/<category>/<page>.md`. Categories and page files are lowercase, hyphen-separated, no spaces, `.md`. Create a category only when at least 3 pages share a distinct domain.
@@ -49,7 +49,7 @@ Append-only: never modify previous entries. Each entry starts with a parseable p
 Reason / details.
 ```
 
-Entry types: `ingest`, `query`, `lint`, `update`. First entry written by init: `## [date] update | bootstrap struttura iniziale`.
+Entry types: `ingest`, `query`, `lint`, `update`, `delete`. First entry written by init: `## [date] update | bootstrap struttura iniziale`.
 
 Appending: the connector has no append tool. Use an exact-match edit (old text = last entry, new text = last entry + new entry) or read-modify-write. Both preserve earlier entries and LF line endings.
 

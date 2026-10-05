@@ -21,7 +21,8 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-ingest` | Turn one raw source into cited wiki pages (plan approved first) | 2 | `references/cmd-ingest.md` |
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
 | `wiki-query`, `wiki-update` | Content operations | 2 | not implemented yet |
-| `wiki-merge`, `wiki-rename`, `wiki-delete` | Maintenance | 3 | not implemented yet |
+| `wiki-delete` | Soft-delete pages: move them into `trash/`, fix index and links (plan approved first) | 3 | `references/cmd-delete.md` |
+| `wiki-merge`, `wiki-rename` | Maintenance | 3 | not implemented yet |
 
 For a command marked "not implemented yet", say so plainly and stop. Never improvise its procedure.
 
@@ -36,8 +37,8 @@ For a command marked "not implemented yet", say so plainly and stop. Never impro
 ## Hard rules
 
 - **Sandbox:** operate only inside the resolved wiki root. Other folders, other wikis and the rest of the filesystem do not exist for you.
-- **`raw/` is immutable:** never edit, move or delete anything inside it. Creating the EMPTY `raw/` folder at bootstrap is required, not a violation.
-- **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`.
+- **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation.
+- **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`. Exception: `wiki-ingest` and `wiki-delete` show a plan first (always, in both modes); once the user approves it, that approval covers every write listed in the plan (pages, index, log). Anything NOT in the plan still needs its own confirmation under `every-write`.
 - **No deletion:** the filesystem connector has none. "Delete" means soft-delete into `trash/` (a dated unique name). `trash/` is ignored by index, log, check and ingest.
 - **Do not invent data.** If unsure, mark `> ❓ DA VERIFICARE` in the page or say you don't know.
 - **One session at a time** on a wiki (it may be a shared network drive). Do not start parallel sessions on the same root.

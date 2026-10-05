@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.3).** Phase 1 was field-tested once; `wiki-ingest` and `wiki-audit` are written and sandbox-tested only. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.4).** Phase 1 was field-tested once; `wiki-ingest`, `wiki-audit` and `wiki-delete` are written and sandbox-tested only. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -18,8 +18,9 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-status` | Quick summary: pages, pending raw sources, last log entries | implemented |
 | `wiki-ingest` | One raw source into cited wiki pages (plan approved first) | written, **not yet field-tested** |
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | written, **not yet field-tested** |
+| `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | written, **not yet field-tested** |
 | `wiki-query`, `wiki-update` | Content operations | planned |
-| `wiki-merge`, `wiki-rename`, `wiki-delete` | Maintenance | planned |
+| `wiki-merge`, `wiki-rename` | Maintenance | planned |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -180,7 +181,7 @@ The skill was written from scratch from these descriptions; no code was copied. 
 
 **Cos'è:** una skill che crea e mantiene una wiki markdown secondo il pattern "LLM Wiki" di Karpathy. Ogni comando controlla prima se può girare nello stato attuale della wiki (S0-S4) e altrimenti si ferma con un errore chiaro.
 
-**Comandi:** `wiki-init`, `wiki-check`, `wiki-check err`, `wiki-status` (testati sul campo una volta); `wiki-ingest` e `wiki-audit` (scritti e testati solo in sandbox, ancora da provare con un modello vero). Gli altri (`query`, `update`, `merge`, `rename`, `delete`) sono pianificati e per ora rispondono "non implementato".
+**Comandi:** `wiki-init`, `wiki-check`, `wiki-check err`, `wiki-status` (testati sul campo una volta); `wiki-ingest` e `wiki-audit` (scritti e testati solo in sandbox, ancora da provare con un modello vero). `wiki-delete` (scritto, solo sandbox). Gli altri (`query`, `update`, `merge`, `rename`) sono pianificati e per ora rispondono "non implementato".
 
 **Installazione:**
 - **Claude Desktop:** scarica `dist/wikifier.zip` e caricalo da *Impostazioni > Competenze > + > Carica una skill*.
