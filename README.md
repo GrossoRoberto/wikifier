@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.5).** Phase 1 was field-tested once; `wiki-ingest`, `wiki-audit`, `wiki-delete` and `wiki-query` are written and sandbox-tested only. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.5).** Tested in the field so far: `wiki-init`, `wiki-check`, `wiki-ingest`. The other commands are written and sandbox-tested, and are **in testing**. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -12,14 +12,14 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 
 | Command | What it does | Status |
 |---|---|---|
-| `wiki-init` | Bootstraps the wiki. If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | implemented |
-| `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | implemented |
-| `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | implemented |
-| `wiki-status` | Quick summary: pages, pending raw sources, last log entries | implemented |
-| `wiki-ingest` | One raw source into cited wiki pages (plan approved first) | written, **not yet field-tested** |
-| `wiki-audit` | Read-only check of citations, uncited claims, contradictions | written, **not yet field-tested** |
-| `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | written, **not yet field-tested** |
-| `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | written, **not yet field-tested** |
+| `wiki-init` | Bootstraps the wiki. If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | field-tested |
+| `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | field-tested |
+| `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | **in testing** |
+| `wiki-status` | Quick summary: pages, pending raw sources, last log entries | **in testing** |
+| `wiki-ingest` | One raw source into cited wiki pages (plan approved first) | field-tested (author's report: works well) |
+| `wiki-audit` | Read-only check of citations, uncited claims, contradictions | **in testing** |
+| `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | **in testing** |
+| `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | **in testing** |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -145,7 +145,7 @@ What was actually tested:
 
 Not tested or not verified:
 
-- `wiki-ingest` and `wiki-audit` behaviour with a real model: the procedures exist, but nobody has run them end to end yet. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
+- `wiki-audit`, `wiki-delete`, `wiki-query` behaviour with a real model: the procedures exist, but they are still in testing. `wiki-ingest` was run in the field by the author, who reports it works well; no detailed log is published here. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
 - A fix in v1.3: a `raw/` folder not yet listed in the index used to make the wiki state S3 and block ingest; it is now "pending ingest" and the state stays S4.
 - `wiki-check err`, `wiki-status`, and the states S1 and S3 in the field.
 - Pi: tool names, permissions, mapped network drives, and whether project skills are also found in parent directories (two sources disagreed).
@@ -180,7 +180,7 @@ The skill was written from scratch from these descriptions; no code was copied. 
 
 **Cos'è:** una skill che crea e mantiene una wiki markdown secondo il pattern "LLM Wiki" di Karpathy. Ogni comando controlla prima se può girare nello stato attuale della wiki (S0-S4) e altrimenti si ferma con un errore chiaro.
 
-**Comandi:** `wiki-init`, `wiki-check`, `wiki-check err`, `wiki-status` (testati sul campo una volta); `wiki-ingest` e `wiki-audit` (scritti e testati solo in sandbox, ancora da provare con un modello vero). `wiki-delete` e `wiki-query` (scritti, solo sandbox). Altri comandi non fanno parte di Wikifier.
+**Comandi:** `wiki-init`, `wiki-check` (provati sul campo); `wiki-check err`, `wiki-status` (**in fase di test**); `wiki-ingest` (provato sul campo dall'autore: funziona bene). `wiki-audit`, `wiki-delete`, `wiki-query` sono **in fase di test** (scritti e provati solo in sandbox). Altri comandi non fanno parte di Wikifier.
 
 **Installazione:**
 - **Claude Desktop:** scarica `dist/wikifier.zip` e caricalo da *Impostazioni > Competenze > + > Carica una skill*.
