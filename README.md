@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.6).** Tested in the field so far: `wiki-init`, `wiki-check`, `wiki-ingest`. The other commands are written and sandbox-tested, and are **in testing**. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.6).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -12,14 +12,14 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 
 | Command | What it does | Status |
 |---|---|---|
-| `wiki-init` | Bootstraps the wiki. If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | field-tested |
-| `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | field-tested |
-| `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | **in testing** |
-| `wiki-status` | Quick summary: pages, pending raw sources, last log entries | **in testing** |
-| `wiki-ingest` | One raw source into a source page plus cited wiki pages, with a backlink sweep (plan approved first) | field-tested (author's report: works well) |
-| `wiki-audit` | Read-only check of citations (incl. line locators), uncited claims, contradictions, lint suggestions | **in testing** |
-| `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | **in testing** |
-| `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | **in testing** |
+| `wiki-init` | Bootstraps the wiki. If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | field-tested (Claude Code, Desktop) |
+| `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | field-tested (Claude Code, Desktop) |
+| `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | field-tested (Claude Code) |
+| `wiki-status` | Quick summary: pages, pending raw sources, last log entries | field-tested (Claude Code) |
+| `wiki-ingest` | One raw source into a source page plus cited wiki pages, with a backlink sweep (plan approved first) | field-tested (Claude Code) |
+| `wiki-audit` | Read-only check of citations (incl. line locators), uncited claims, contradictions, lint suggestions | field-tested (Claude Code) |
+| `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | field-tested (Claude Code) |
+| `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | field-tested (Claude Code) |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -116,7 +116,7 @@ confirmations: every-write
 - It is tolerated in the wiki root (ignored by index and check), but never inside `raw/` or `wiki/`.
 - If it is not found, the state is S0 and the skill does not search anywhere else. Run `wiki-init` and it will interview you and draft the file.
 - Same wiki from several machines? Keep the same file and put the other machine's path in `path_alt`.
-- Field-tested so far: the chat-attachment route on Claude Desktop. The Project knowledge route, Claude Code and Pi are written from the documentation but not yet tried.
+- Field-tested so far: the chat-attachment route on Claude Desktop (phase 1 commands) and the launch-directory route on Claude Code (all commands, author's report). The Project knowledge route and Pi are written from the documentation but not yet tried.
 
 > Path rules, validation and edge cases: [`wikifier/references/infowiki-template.md`](wikifier/references/infowiki-template.md).
 
@@ -141,13 +141,14 @@ What was actually tested:
 
 - Static checks of the skill (frontmatter, description length, links between files, line endings) and of the state definitions S0-S4 on synthetic wikis, with a reference checker written by the author. This validates the *definitions*, not the model's behaviour.
 - One field test on Claude Desktop (a cloud session linked to a computer): activation from the description, S0 to draft to bootstrap to S4, `index.md`/`log.md` verified byte for byte. It led to the v1.1 fixes.
+- Field tests on Claude Code by the author after v1.6: all commands, reported working. A first Code run (v1.3) exposed the loose-files-in-`raw/` case and the too-many-confirmations issue, fixed in v1.4.
 - `scripts/verify_quotes.py` (quote exists in the raw file) tested on a synthetic wiki with seeded errors (`tests/test_wikifier.py`, run `python tests/test_wikifier.py`). A field-test kit for ingest/audit is in `tests/field/`.
 
 Not tested or not verified:
 
-- `wiki-audit`, `wiki-delete`, `wiki-query` behaviour with a real model: the procedures exist, but they are still in testing. `wiki-ingest` was run in the field by the author, who reports it works well; no detailed log is published here. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
+- All commands were run on Claude Code by the author, who reports they work; no detailed log is published here, and it is one tester on one setup. On Claude Desktop only the phase 1 commands were run. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
 - A fix in v1.3: a `raw/` folder not yet listed in the index used to make the wiki state S3 and block ingest; it is now "pending ingest" and the state stays S4.
-- `wiki-check err`, `wiki-status`, and the states S1 and S3 in the field.
+- Whether every state (S1, S3) was exercised individually in the field: not recorded.
 - Pi: tool names, permissions, mapped network drives, and whether project skills are also found in parent directories (two sources disagreed).
 - The Claude Desktop local Filesystem connector (the field test used a different toolset).
 - Concurrent access from two machines to the same wiki: the rule is one session at a time.
@@ -180,7 +181,7 @@ The skill was written from scratch from these descriptions; no code was copied. 
 
 **Cos'è:** una skill che crea e mantiene una wiki markdown secondo il pattern "LLM Wiki" di Karpathy. Ogni comando controlla prima se può girare nello stato attuale della wiki (S0-S4) e altrimenti si ferma con un errore chiaro.
 
-**Comandi:** `wiki-init`, `wiki-check` (provati sul campo); `wiki-check err`, `wiki-status` (**in fase di test**); `wiki-ingest` (provato sul campo dall'autore: funziona bene). `wiki-audit`, `wiki-delete`, `wiki-query` sono **in fase di test** (scritti e provati solo in sandbox). Altri comandi non fanno parte di Wikifier.
+**Comandi:** tutti provati sul campo dall'autore su Claude Code (funzionano, segnalazione dell'autore, senza log dettagliato). Su Claude Desktop sono stati provati solo i comandi di fase 1; Pi e la route Project knowledge non sono ancora verificati. Altri comandi non fanno parte di Wikifier.
 
 **Installazione:**
 - **Claude Desktop:** scarica `dist/wikifier.zip` e caricalo da *Impostazioni > Competenze > + > Carica una skill*.
