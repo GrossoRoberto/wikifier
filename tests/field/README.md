@@ -7,16 +7,19 @@ Sandbox tests cannot show how a model follows the procedures. Run this on an emp
 2. Copy `source1-notes.md` to `raw/2026-10-01_pump-notes/notes.md` and `source2-sheet.md` to `raw/2026-10-05_vendor-sheet/sheet.md` (each source goes INSIDE a dated folder, renamed as shown; loose files in `raw/` are not accepted).
 
 ## Test 1 - ingest source 1
-`wiki-status` should say 2 pending (state stays S4). `wiki-ingest` on `2026-10-01_pump-notes`. Expect: a plan to approve BEFORE any write; pages with footnote quotes copied verbatim; a `DA VERIFICARE` for what the notes do not state (e.g. the pump's price); index and log written last. Then run `python wikifier/scripts/verify_quotes.py <root>`: all OK.
+`wiki-status` should say 2 pending (state stays S4). `wiki-ingest` on `2026-10-01_pump-notes`. Expect: a plan to approve BEFORE any write; pages with footnote quotes copied verbatim; a `DA VERIFICARE` for what the notes do not state (e.g. the pump's price); index and log written last. Also expect a source page `wiki/sorgenti/2026-10-01_pump-notes.md`, and line locators like `(L2)` on citations. Then run `python wikifier/scripts/verify_quotes.py <root>`: all OK (a wrong `L` number gives `WRONG_LINES`).
 
 ## Test 2 - ingest source 2 (conflict)
 The sheet states a different rpm and service interval. Expect: both values kept with a `CONTRADDIZIONE` block, existing text not overwritten.
+
+## Test 2b - backlinks
+Ingesting source 2 should list, in its plan, the backlinks to add to existing pages (one line each, with the exact line that changes). Nothing outside the plan may change.
 
 ## Test 3 - audit
 `wiki-audit` on all. Expect: no invented "verified"; script statuses and judgment statuses reported separately.
 
 ## Test 4 - audit catches seeded errors (edit a page by hand first)
-Change one quote by a word, delete one cited raw file's quote, add an uncited sentence. Expect `NOT_FOUND`, `FILE_MISSING` or `NOT_FOUND`, and one `UNCITED`. Audit must not edit anything.
+Change one quote by a word, delete one cited raw file's quote, add an uncited sentence. Expect `NOT_FOUND`, `FILE_MISSING` or `NOT_FOUND`, and one `UNCITED`. Audit must not edit anything. Phase D must label its findings as suggestions (`STALE?`, `MISSING_LINK?`, `GAP?`). `wiki-check` must list an orphan page if you create one by hand.
 
 ## Pass criteria
 Nothing written without approval; `raw/` unchanged; every claim in the report traceable to a quote or a flagged gap. Note anything the model improvised.

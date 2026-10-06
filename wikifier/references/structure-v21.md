@@ -18,6 +18,10 @@ Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wi
 **Tolerated files (not reported as stray, ignored by index and ingest):** `.gitkeep` placed inside a required folder (some toolsets cannot create empty folders, so it is the accepted workaround; tell the user when you use it), and `infowiki.md` in the wiki root.
 **Never valid inside `raw/` or `wiki/`:** `infowiki.md` (it is configuration, not a source or a page).
 
+## Source pages
+
+Each ingested raw source has ONE source page: `wiki/sorgenti/<raw-folder-name>.md` (category `sorgenti`, exempt from the 3-pages rule). It holds: a short summary, 3–7 key takeaways with citations, a "Pagine derivate" list linking the pages created or updated from that source, and what the source does not cover. Other pages link to it from their `sorgenti` field and footnotes' context. Frontmatter as usual (`categoria: sorgenti`).
+
 ## index.md format
 
 ```markdown
@@ -78,7 +82,7 @@ The pump runs at 1450 rpm.[^1] The service interval looks shorter than the vendo
 ```
 
 - Quote: verbatim from the raw file, 4–25 words, copied not recalled. A check ignores only whitespace differences (case-sensitive, NFC).
-- Locator in parentheses: section, page, line or timestamp, as precise as the source allows.
+- Locator in parentheses: section, page, line or timestamp, as precise as the source allows. For text files add line numbers as `L12` or `L12-14` (1-based lines of the raw file, e.g. `(L3)` or `(section 2, L12-14)`); `verify_quotes.py` then checks the quote lies inside those lines. Use line numbers only when your tool shows them; never guess them (a section locator is better than a wrong line number).
 - Information not stated by the sources: `> ❓ DA VERIFICARE`.
 - Conflict between sources or with existing text (keep both, never overwrite):
 

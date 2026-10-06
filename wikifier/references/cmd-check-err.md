@@ -15,7 +15,7 @@ Runs `wiki-check`, then proposes and applies repairs. Allowed in S2 and S3. In S
 | Missing `log.md` | Create it with a first `update` entry describing the repair |
 
 3. **Raw sources and the index:** a `raw/` folder that is not listed is pending ingest, not an error. Never add it to the index: that would claim it was processed. A listed source that no longer exists in `raw/` is reported to the user, never removed automatically.
-4. **Not repaired automatically** (list them as "needs your decision"): stray files, naming violations, malformed log entries, links into `trash/`, raw folder names. Never rename, move or delete anything in `raw/`.
+4. **Not repaired automatically** (list them as "needs your decision"): stray files, orphan pages, source pages missing, naming violations, malformed log entries, links into `trash/`, raw folder names. Never rename, move or delete anything in `raw/`.
 5. Apply the plan following the `confirmations` policy from `infowiki.md`: `every-write` = ask before each step; `session-ok` = one confirmation for the whole plan.
 6. After each step, verify by re-reading/listing.
 7. Append one entry to `log.md`: `## [YYYY-MM-DD] update | check err: <n> repairs` with a short list of what changed (append method in `structure-v21.md`).

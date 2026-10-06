@@ -44,6 +44,24 @@ qr = (SK/"references/cmd-query.md").read_text()
 check("Writes nothing at all" in qr and "log.md" in qr, "query: writes nothing")
 check("not implemented yet" not in txt, "SKILL.md: no leftover placeholder rows")
 
+ck = (SK/"references/cmd-check.md").read_text(); au = (SK/"references/cmd-audit.md").read_text(); st = (SK/"references/structure-v21.md").read_text()
+check("Orphan pages" in ck and "wiki/sorgenti" in ck, "check: orphan + source page rows")
+check("Backlink sweep" in ing and "wiki/sorgenti/<raw-folder>.md" in ing, "ingest: sweep + source page")
+check("**D — Lint suggestions" in au and "STALE?" in au and "WRONG_LINES" in au, "audit: phase D + line check")
+check("`L12-14`" in st and "Source pages" in st, "structure: line locators + source pages")
+def orphans(root):
+    pages = {p.relative_to(root).as_posix(): p for p in (root/"wiki").rglob("*.md")}
+    linked = set()
+    for rel, p in pages.items():
+        for l in re.findall(r"\]\(([^)]+\.md)\)", p.read_text()):
+            tgt = os.path.normpath(os.path.join(os.path.dirname(rel), l)).replace(os.sep, "/")
+            if tgt != rel: linked.add(tgt)
+    return sorted(set(pages) - linked)
+ow = pathlib.Path(tempfile.mkdtemp()); (ow/"wiki/a").mkdir(parents=True)
+(ow/"wiki/a/x.md").write_text("[y](y.md)"); (ow/"wiki/a/y.md").write_text("[x](x.md)"); (ow/"wiki/a/z.md").write_text("[z](z.md) self only")
+check(orphans(ow) == ["wiki/a/z.md"], "orphan reference: self-link does not count")
+shutil.rmtree(ow)
+
 # ---- 2. reference preflight ----
 REQ = ["index.md","log.md","raw","wiki","trash"]
 def parse_info(p):
@@ -106,7 +124,7 @@ w = tmp/"vw"; (w/"wiki/cat").mkdir(parents=True); (w/"raw/2026-10-01_n").mkdir(p
 page = '''---
 titolo: P
 ---
-Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9]
+Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9] L ok.[^11] L wrong.[^12] L span.[^13] L range.[^14]
 
 [^1]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (line 2)
 [^2]: raw/2026-10-01_n/notes.md — "nominal speed is 1480 rpm" (line 2)
@@ -117,6 +135,10 @@ Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Esc
 [^7]: [synthesis] raw/2026-10-01_n/notes.md — my inference
 [^8]: raw/2026-10-01_n/notes.md — "NOMINAL SPEED IS 1450 RPM" (line 2)
 [^10]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (line 3)
+[^11]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (L4)
+[^12]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (section 3, L1-2)
+[^13]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (L2-3)
+[^14]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (L40)
 '''
 (w/"wiki/cat/p.md").write_text(page, encoding="utf-8")
 def run(*a): return subprocess.run([sys.executable, str(SCRIPT), *map(str, a)], capture_output=True, text=True)
@@ -124,7 +146,7 @@ r = run(w); got = {}; allst = {}
 for l in r.stdout.splitlines():
     s, _, tag, _ = l.split("\t", 3); got.setdefault(tag, s) if s != "UNUSED_DEF" else None; allst.setdefault(tag, set()).add(s)
 exp = {"[^1]":"OK","[^2]":"NOT_FOUND","[^3]":"FILE_MISSING","[^4]":"UNSUPPORTED_TYPE","[^5]":"MALFORMED",
-       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK"}
+       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK","[^11]":"OK","[^12]":"WRONG_LINES","[^13]":"OK","[^14]":"WRONG_LINES"}
 for k, v in exp.items(): check(got.get(k) == v, f"verify_quotes {k}: expected {v}, got {got.get(k)}")
 check("UNUSED_DEF" in allst["[^10]"], "unused definition flagged")
 check(r.returncode == 1, "exit 1 when blocking findings exist")

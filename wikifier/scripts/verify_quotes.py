@@ -14,9 +14,13 @@ This proves the text EXISTS in the source. It does NOT prove the page's claim is
 supported by it: that is a judgment step (references/cmd-audit.md).
 
 Output: one line per citation  <STATUS>\t<page>\t[^id]\t<detail>
-Statuses: OK NOT_FOUND FILE_MISSING UNSUPPORTED_TYPE MALFORMED OUTSIDE_ROOT
+Optional line locator: if the parenthesised locator contains L<n> or L<a>-<b> (1-based lines of the
+raw file, split on newlines), the quote must occur inside those lines, else WRONG_LINES.
+Locators without an L-token (e.g. "section 2") are not checked.
+
+Statuses: OK NOT_FOUND WRONG_LINES FILE_MISSING UNSUPPORTED_TYPE MALFORMED OUTSIDE_ROOT
           SYNTHESIS_SKIPPED ORPHAN_REF UNUSED_DEF
-Exit code 0 only if no line is NOT_FOUND/FILE_MISSING/UNSUPPORTED_TYPE/MALFORMED/OUTSIDE_ROOT/ORPHAN_REF.
+Exit code 0 only if no line is NOT_FOUND/WRONG_LINES/FILE_MISSING/UNSUPPORTED_TYPE/MALFORMED/OUTSIDE_ROOT/ORPHAN_REF.
 """
 import re, sys, unicodedata, pathlib
 
@@ -24,7 +28,8 @@ TEXT_EXT = {".md", ".txt", ".csv", ".json", ".yaml", ".yml", ".html", ".htm", ".
 DEF = re.compile(r"^\[\^([^\]]+)\]:\s*(.*)$")
 QUOTE = re.compile(r'^(?P<path>.+?)\s+—\s+"(?P<q>.+)"\s*(?:\((?P<loc>[^()]*)\))?\s*$')
 REF = re.compile(r"\[\^([^\]]+)\](?!:)")
-BAD = {"NOT_FOUND", "FILE_MISSING", "UNSUPPORTED_TYPE", "MALFORMED", "OUTSIDE_ROOT", "ORPHAN_REF"}
+LINES = re.compile(r"(?<![A-Za-z0-9])L(\d+)(?:\s*-\s*L?(\d+))?(?![A-Za-z0-9])")
+BAD = {"NOT_FOUND", "WRONG_LINES", "FILE_MISSING", "UNSUPPORTED_TYPE", "MALFORMED", "OUTSIDE_ROOT", "ORPHAN_REF"}
 
 def norm(s):
     return re.sub(r"\s+", " ", unicodedata.normalize("NFC", s)).strip()
@@ -72,12 +77,23 @@ def check_page(root, page):
             out.append(("UNSUPPORTED_TYPE", rel, tag, f"{target.suffix or '(none)'}: verify by reading the source"))
             continue
         if target not in cache:
-            cache[target] = norm(target.read_text(encoding="utf-8", errors="replace"))
+            raw = target.read_text(encoding="utf-8", errors="replace")
+            cache[target] = (norm(raw), raw.split("\n"))
+        whole, rows = cache[target]
         q = norm(m.group("q"))
-        if q and q in cache[target]:
-            out.append(("OK", rel, tag, str(p)))
-        else:
+        if not q or q not in whole:
             out.append(("NOT_FOUND", rel, tag, f'{p}: "{q[:60]}"'))
+            continue
+        lm = LINES.search(m.group("loc") or "")
+        if lm:
+            a = int(lm.group(1)); b = int(lm.group(2) or a)
+            if a < 1 or b < a or b > len(rows):
+                out.append(("WRONG_LINES", rel, tag, f"{p}: lines {a}-{b} outside file ({len(rows)} lines)"))
+                continue
+            if q not in norm("\n".join(rows[a - 1:b])):
+                out.append(("WRONG_LINES", rel, tag, f"{p}: quote exists but not in lines {a}-{b}"))
+                continue
+        out.append(("OK", rel, tag, str(p)))
     return out
 
 def main(argv):

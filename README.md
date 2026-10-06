@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.5).** Tested in the field so far: `wiki-init`, `wiki-check`, `wiki-ingest`. The other commands are written and sandbox-tested, and are **in testing**. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.6).** Tested in the field so far: `wiki-init`, `wiki-check`, `wiki-ingest`. The other commands are written and sandbox-tested, and are **in testing**. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -16,8 +16,8 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | field-tested |
 | `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | **in testing** |
 | `wiki-status` | Quick summary: pages, pending raw sources, last log entries | **in testing** |
-| `wiki-ingest` | One raw source into cited wiki pages (plan approved first) | field-tested (author's report: works well) |
-| `wiki-audit` | Read-only check of citations, uncited claims, contradictions | **in testing** |
+| `wiki-ingest` | One raw source into a source page plus cited wiki pages, with a backlink sweep (plan approved first) | field-tested (author's report: works well) |
+| `wiki-audit` | Read-only check of citations (incl. line locators), uncited claims, contradictions, lint suggestions | **in testing** |
 | `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | **in testing** |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | **in testing** |
 
