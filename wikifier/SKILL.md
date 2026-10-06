@@ -1,6 +1,6 @@
 ---
 name: wikifier
-description: Create and maintain an LLM wiki (Karpathy pattern). Use for wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest, wiki-query, wiki-audit, or any request to build or fix the project wiki.
+description: Create and maintain an LLM wiki (Karpathy pattern). Commands: wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest, wiki-query, wiki-audit, wiki-delete. Use to build or fix the wiki.
 ---
 
 # Wikifier
