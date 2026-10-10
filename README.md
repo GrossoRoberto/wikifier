@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.8).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.9).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -12,7 +12,7 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 
 | Command | What it does | Status |
 |---|---|---|
-| `wiki-init` | Bootstraps the wiki. If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | field-tested (Claude Code, Desktop) |
+| `wiki-init` | Bootstraps the wiki with its whole structure (`raw/`, `wiki/`, `trash/`, `_wikifier/chat/`, `_wikifier/report/`, `index.md`, `log.md`). If `infowiki.md` is missing it drafts one and explains where to save it; it creates nothing in that case | field-tested (Claude Code, Desktop) |
 | `wiki-check` | Read-only self-diagnosis: config found? root reachable? structure complete? `index.md` aligned with the files? | field-tested (Claude Code, Desktop) |
 | `wiki-check err` | Runs the check, then proposes repairs and applies them only after your confirmation | field-tested (Claude Code) |
 | `wiki-status` | Quick summary: pages, pending raw sources, last log entries | field-tested (Claude Code) |
@@ -138,7 +138,7 @@ Rules enforced by the skill: `raw/` content is never modified; nothing is ever d
 
 ## Folders the skill writes to
 
-Besides `index.md`, `log.md` and `wiki/`, the skill may write to `trash/` (soft-deleted pages) and to one optional system folder, `_wikifier/`: `chat/` for chat extracts made by `wiki-update`, `report/` only for plans or reports you explicitly ask to save. It never writes to `raw/` (immutable, no exceptions) and creates no other files in the wiki root: `wiki-check` flags any it finds.
+Besides `index.md`, `log.md` and `wiki/`, the skill may write to `trash/` (soft-deleted pages) and to the system folder `_wikifier/` (created, with `chat/` and `report/`, by `wiki-init` together with the rest of the structure; wikis made before v1.8 get it from `wiki-check err`): `chat/` for chat extracts made by `wiki-update`, `report/` only for plans or reports you explicitly ask to save. It never writes to `raw/` (immutable, no exceptions) and creates no other files in the wiki root: `wiki-check` flags any it finds.
 
 ## Making every chat aware of the wiki
 

@@ -10,18 +10,13 @@ Layout taken from the project's SCHEMA v2.1, tested on the field with the filesy
 ├── log.md            chronological, append-only record
 ├── raw/              immutable sources
 ├── wiki/             pages written and maintained by Claude
-└── trash/            soft-delete bin (ignored by everything); names `YYYY-MM-DD_<category>_<file>.md`
+├── trash/            soft-delete bin (ignored by everything); names `YYYY-MM-DD_<category>_<file>.md`
+└── _wikifier/        system folder (ignored by index, ingest and the alignment check, like `trash/`)
+    ├── chat/         chat extracts written by wiki-update: YYYY-MM-DD_<topic>.md, never edited afterwards
+    └── report/       plans, audit and other reports, ONLY when the user asks to save them: YYYY-MM-DD_<type>-<topic>.md
 ```
 
-Optional system folder (NOT a required item, created on first use, ignored by index, ingest and preflight like `trash/`):
-
-```
-<root>/_wikifier/
-├── chat/             chat extracts written by wiki-update: YYYY-MM-DD_<topic>.md, never edited afterwards
-└── report/           plans, audit and other reports, ONLY when the user asks to save them: YYYY-MM-DD_<type>-<topic>.md
-```
-
-No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
+The whole tree above is created by `wiki-init` (empty folders). `_wikifier/chat/` and `_wikifier/report/` are required items: a wiki created before they existed is state S2 until `wiki-check err` adds them. No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
 
 Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wiki/` allows at most 2 levels: `wiki/<category>/<page>.md`. Categories and page files are lowercase, hyphen-separated, no spaces, `.md`. Create a category only when at least 3 pages share a distinct domain.
 
@@ -57,7 +52,7 @@ Aggiornato: YYYY-MM-DD | Pagine totali: N | Sorgenti raw: N
 - `_wikifier/chat/YYYY-MM-DD_topic.md` — description, recorded on: date
 ```
 
-The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. The counts in the header refer to raw sources only.
+The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. A `.gitkeep` inside `_wikifier/chat/` or `_wikifier/report/` is not an extract or a report. The counts in the header refer to raw sources only.
 
 Empty skeleton (used by init): same header with `Pagine totali: 0 | Sorgenti raw: 0` and the section headings without entries.
 

@@ -73,8 +73,13 @@ check("No stray files" in txt and "_wikifier/" in txt and "no exception" in txt,
 check("raw/YYYY-MM-DD_chat" not in "".join(f.read_text() for f in (SK/"references").glob("*.md")), "no leftover chat-in-raw instructions")
 check("_wikifier" in ck and "..._chat-..." in ck, "check flags chat folders in raw and tolerates _wikifier")
 
+ini = (SK/"references/cmd-init.md").read_text()
+check("_wikifier/chat" in ini and "_wikifier/report" in ini and "whole structure" in ini, "init creates the whole structure")
+check("born from `wiki-ingest`" in txt and "`wiki-update`" in txt, "SKILL.md: how a wiki lives")
+check("required items" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
+
 # ---- 2. reference preflight ----
-REQ = ["index.md","log.md","raw","wiki","trash"]
+REQ = ["index.md","log.md","raw","wiki","trash","_wikifier/chat","_wikifier/report"]
 def parse_info(p):
     if not p.exists(): return None
     m = re.match(r"---\n(.*?)\n---", p.read_text(), re.S)
@@ -106,7 +111,7 @@ def mk(name, info=True, root=True, req=None, index="ok", pending=False, listed_m
         (base/"infowiki.md").write_text(f"---\nproject_name: T\npath: {r}\npath_alt: \ndomain: d\n---\n")
     if root:
         r.mkdir()
-        for x in req: (r/x).mkdir() if "." not in x else (r/x).write_text("")
+        for x in req: (r/x).mkdir(parents=True) if "." not in x else (r/x).write_text("")
         if "wiki" in req: (r/"wiki/cat").mkdir(); (r/"wiki/cat/p.md").write_text("x")
         if "raw" in req:
             (r/"raw/2026-01-01_a").mkdir()
@@ -119,7 +124,8 @@ def mk(name, info=True, root=True, req=None, index="ok", pending=False, listed_m
     return base/"infowiki.md"
 for k, (p, exp) in {
   "S0 no infowiki": (mk("a", info=False), "S0"), "S1 root missing": (mk("b", root=False), "S1"),
-  "S2 no trash": (mk("c", req=["index.md","log.md","raw","wiki"]), "S2"),
+  "S2 no trash": (mk("c", req=["index.md","log.md","raw","wiki","_wikifier/chat","_wikifier/report"]), "S2"),
+  "S2 old wiki without _wikifier": (mk("c2", req=["index.md","log.md","raw","wiki","trash"]), "S2"),
   "S3 page not in index": (mk("d", index="stale"), "S3"), "S4 healthy": (mk("e"), "S4"),
   "S4 with pending raw (must NOT be S3)": (mk("f", pending=True), "S4"),
   "S3 listed raw source gone": (mk("g", listed_missing=True), "S3")}.items():

@@ -11,14 +11,14 @@ Read-only self-diagnosis. It never writes anything: no files, no log entry.
 |---|---|---|
 | 1 | `infowiki.md` found, all required variables present; list unknown keys | ❌ missing/incomplete, ⚠️ unknown keys |
 | 2 | Root reachable (`path`, else `path_alt`); say which one is used | ❌ |
-| 3 | Required items exist: `index.md`, `log.md`, `raw/`, `wiki/`, `trash/` | ❌ each missing |
+| 3 | Required items exist: `index.md`, `log.md`, `raw/`, `wiki/`, `trash/`, `_wikifier/chat/`, `_wikifier/report/` | ❌ each missing |
 | 4 | `index.md` header present; counts (`Pagine totali`, `Sorgenti raw`) match reality | ⚠️ |
 | 5 | Every page under `wiki/` is listed in `index.md` | ⚠️ |
 | 6 | Every link in `index.md` resolves to an existing file (no links into `trash/`) | ❌ |
 | 7 | Every raw source listed in `index.md` still exists in `raw/` (❌ if missing). Unlisted `raw/` folders are NOT a problem: report them as info "pending ingest: n". Folder names follow `YYYY-MM-DD_description` (⚠️ if not) | ❌ / ⚠️ |
 | 8 | Page files and category folders follow naming (lowercase, hyphens, `.md`); depth ≤ 2 levels | ⚠️ |
 | 9 | `log.md` entries all start with `## [YYYY-MM-DD] <type> | ...` | ⚠️ |
-| 10 | Stray files outside the expected layout (report only, never move). Do not report `.gitkeep` files, `infowiki.md` or the `_wikifier/` folder in the root. DO report: any other file or folder next to the required items (plans, audits, notes: user decides), and any folder named `..._chat-...` inside `raw/` (a chat extract must live in `_wikifier/chat/`; the user moves it, raw is never touched by the skill). Report `infowiki.md` found inside `raw/` or `wiki/` as misplaced (it would be mistaken for a source) | ⚠️ |
+| 10 | Stray files outside the expected layout (report only, never move). Do not report `.gitkeep` files, `infowiki.md` or the `_wikifier/` folder (with `chat/` and `report/`) in the root. DO report: any other file or folder next to the required items (plans, audits, notes: user decides), and any folder named `..._chat-...` inside `raw/` (a chat extract must live in `_wikifier/chat/`; the user moves it, raw is never touched by the skill). Report `infowiki.md` found inside `raw/` or `wiki/` as misplaced (it would be mistaken for a source) | ⚠️ |
 | 11 | Orphan pages: a page under `wiki/` that no OTHER page under `wiki/` links to (links from `index.md` do not count). List them | ⚠️ |
 | 12 | Every raw source listed in `index.md` has its source page `wiki/sorgenti/<folder>.md` (wikis ingested before source pages existed will show this: report as info, not an error) | ⚠️ |
 

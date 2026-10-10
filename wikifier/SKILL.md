@@ -8,6 +8,10 @@ description: Wiki skill (Karpathy LLM wiki). Commands: wiki-init, wiki-check, wi
 Builds and maintains a persistent, interlinked markdown wiki compiled by the LLM from immutable raw sources (Karpathy "LLM Wiki" pattern: raw sources / wiki / schema, with `index.md` and `log.md`).
 This file is only the router. Procedures live in `references/` and are read on demand.
 
+## How a wiki lives
+
+A wiki is born from `wiki-ingest` (the first sources in `raw/`) and then lives on with `wiki-update` (what happens in the chats), further ingests of new sources, and `wiki-query`/`wiki-audit` to use and verify it. `wiki-init` creates the whole structure at once.
+
 ## Commands
 
 The user writes commands in natural language ("wiki-check") or as a slash command with the command as argument: `/wikifier check err` in Claude Code, `/skill:wikifier check err` in Pi.
@@ -41,7 +45,7 @@ Any other `wiki-*` command is not part of Wikifier (for example merge, rename): 
 - **Sandbox:** operate only inside the resolved wiki root. Other folders, other wikis and the rest of the filesystem do not exist for you.
 - **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation.  No command writes there, with no exception (chat extracts go to `_wikifier/chat/`).
 - **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`. Exception: `wiki-ingest`, `wiki-update` and `wiki-delete` show a plan first (always, in both modes); once the user approves it, that approval covers every write listed in the plan (pages, index, log). Anything NOT in the plan still needs its own confirmation under `every-write`.
-- **No stray files:** create nothing in the wiki root except `index.md`, `log.md`, `raw/`, `wiki/`, `trash/` and the system folder `_wikifier/` (`chat/` for chat extracts, `report/` for plans and reports the user explicitly asks to save). Plans, audits and notes are shown in the chat, never written as files unless asked.
+- **No stray files:** create nothing in the wiki root except `index.md`, `log.md`, `raw/`, `wiki/`, `trash/` and the system folder `_wikifier/` (created by `wiki-init`; `chat/` for chat extracts, `report/` for plans and reports the user explicitly asks to save). Plans, audits and notes are shown in the chat, never written as files unless asked.
 - **No deletion:** the filesystem connector has none. "Delete" means soft-delete into `trash/` (a dated unique name). `trash/` is ignored by index, log, check and ingest.
 - **Do not invent data.** If unsure, mark `> ❓ DA VERIFICARE` in the page or say you don't know.
 - **One session at a time** on a wiki (it may be a shared network drive). Do not start parallel sessions on the same root.
