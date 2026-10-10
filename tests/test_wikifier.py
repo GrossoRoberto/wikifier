@@ -78,6 +78,9 @@ check("_wikifier/chat" in ini and "_wikifier/report" in ini and "whole structure
 check("born from `wiki-ingest`" in txt and "`wiki-update`" in txt, "SKILL.md: how a wiki lives")
 check("required items" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
 
+check("Saved plans and reports" in st and "NOT an approval" in st and "piano-ingest" in st and "never overwrite" in st, "structure: saved plans/reports rules")
+check(all("Saved plans and reports" in (SK/"references"/f).read_text() for f in ("cmd-ingest.md","cmd-update.md","cmd-delete.md","cmd-audit.md")), "ingest/update/delete/audit point to the saved-report rules")
+
 # ---- 2. reference preflight ----
 REQ = ["index.md","log.md","raw","wiki","trash","_wikifier/chat","_wikifier/report"]
 def parse_info(p):

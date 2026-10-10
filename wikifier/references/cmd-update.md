@@ -24,3 +24,5 @@ Same as `cmd-ingest.md`: if interrupted, do not write index or log; tell the use
 ## Proactive suggestion
 
 See SKILL.md "Working inside a wiki chat". The suggestion never writes anything.
+
+The plan is shown in the chat. Save it as a file only if the user asks (`structure-v21.md` "Saved plans and reports"); a saved plan never replaces the approval.

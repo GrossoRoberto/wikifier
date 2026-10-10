@@ -21,3 +21,5 @@ Soft-delete wiki pages: MOVE them into `trash/`, never erase. Allowed only in st
 
 - The raw source a deleted page cited stays in `raw/` and in "Sorgenti raw indicizzate": other pages may use it. Say so if the deleted page was the only one citing it, and leave the decision to the user.
 - If interrupted midway, do not write the log; tell the user which pages were already moved.
+
+The plan is shown in the chat. Save it as a file only if the user asks (`structure-v21.md` "Saved plans and reports"); a saved plan never replaces the approval.

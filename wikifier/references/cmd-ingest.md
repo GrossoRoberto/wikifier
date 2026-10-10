@@ -27,3 +27,5 @@ Turn ONE raw source into wiki pages. Allowed only in state S4 (see `preflight.md
 
 - Stopped midway (error, user cancels): do NOT write the index or log. Tell the user exactly which pages were already written; the next `wiki-check` will flag them as not indexed and `wiki-check err` can finish the job.
 - Never delete or overwrite a page to "start over"; use `trash/` (soft-delete) only if the user asks.
+
+The plan is shown in the chat. Save it as a file only if the user asks (`structure-v21.md` "Saved plans and reports"); a saved plan never replaces the approval.

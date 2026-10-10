@@ -27,6 +27,16 @@ Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wi
 
 `wiki-update` saves what it records from a conversation as `_wikifier/chat/YYYY-MM-DD_<topic>.md` (verbatim extract of the relevant messages only; if the name exists add `-2`). NEVER in `raw/`, which no command writes to. After writing, the file is not edited again; it is cited with verbatim quotes and line locators, listed in the index section "Estratti di chat", and has its own source page `wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
 
+## Saved plans and reports
+
+Default: plans (ingest, update, delete) and reports (audit, check) are shown in the chat and NOT saved. Only when the user explicitly asks to keep one:
+
+- File: `_wikifier/report/YYYY-MM-DD_<type>-<topic>.md`. Types: `piano-ingest`, `piano-update`, `piano-delete`, `audit`, `check`. Example: `2026-10-10_piano-ingest-pump-notes.md`. If the name exists add `-2`, `-3`; never overwrite.
+- Content: frontmatter (`tipo`, `comando`, `data`, `ambito`) followed by exactly what was shown in the chat. Nothing is added or invented.
+- One file per run, written only after the user asks, and not edited afterwards.
+- Not listed in `index.md`, not written to `log.md`, never cited as a source, ignored by ingest, audit and query.
+- A saved plan is NOT an approval: approval is still asked in the chat. Never create these files "to be safe" and never put them anywhere else (no `piano-*.md` or `audit-*.md` in the root, in `raw/` or in `wiki/`).
+
 ## Source pages
 
 Each ingested raw source has ONE source page: `wiki/sorgenti/<raw-folder-name>.md` (category `sorgenti`, exempt from the 3-pages rule). It holds: a short summary, 3–7 key takeaways with citations, a "Pagine derivate" list linking the pages created or updated from that source, and what the source does not cover. Other pages link to it from their `sorgenti` field and footnotes' context. Frontmatter as usual (`categoria: sorgenti`).
