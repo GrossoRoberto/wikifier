@@ -29,7 +29,7 @@ for f in list((SK/"references").glob("*.md")) + [SK/"SKILL.md", SCRIPT]:
 for f in (SK/"references").glob("*.md"):
     t = f.read_text(encoding="utf-8")
     check("192.168" not in t and "DatiLab" not in t, f"{f.name}: no personal data")
-for cmd in ("ingest", "audit", "delete", "query"):
+for cmd in ("ingest", "audit", "delete", "query", "update"):
     check(f"cmd-{cmd}.md" in txt and "not implemented" not in
           [l for l in txt.splitlines() if f"`wiki-{cmd}`" in l][0], f"SKILL.md routes wiki-{cmd}")
 
@@ -61,6 +61,14 @@ ow = pathlib.Path(tempfile.mkdtemp()); (ow/"wiki/a").mkdir(parents=True)
 (ow/"wiki/a/x.md").write_text("[y](y.md)"); (ow/"wiki/a/y.md").write_text("[x](x.md)"); (ow/"wiki/a/z.md").write_text("[z](z.md) self only")
 check(orphans(ow) == ["wiki/a/z.md"], "orphan reference: self-link does not count")
 shutil.rmtree(ow)
+
+up = (SK/"references/cmd-update.md").read_text()
+check("Working inside a wiki chat" in txt and "at most once per milestone" in txt, "SKILL.md: proactive suggestion rule")
+check("never through ingest" in txt and "NOT `wiki-ingest`" in up, "update vs ingest routing")
+check("raw/YYYY-MM-DD_chat-<topic>/chat.md" in up and "BOTH confirmation modes" in up and "Coperto fino a" in up and "CORRETTO" in up, "update: extract, plan, watermark, correction block")
+check("NEVER write secrets" in up, "update: no secrets")
+check("`update`, `delete`" in pf_ if (pf_ := (SK/"references/preflight.md").read_text()) else False, "preflight: update is a write command")
+check("Chat extracts" in st and "chat-" in ing, "structure + ingest know chat folders")
 
 # ---- 2. reference preflight ----
 REQ = ["index.md","log.md","raw","wiki","trash"]

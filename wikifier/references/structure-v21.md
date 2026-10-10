@@ -18,6 +18,10 @@ Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wi
 **Tolerated files (not reported as stray, ignored by index and ingest):** `.gitkeep` placed inside a required folder (some toolsets cannot create empty folders, so it is the accepted workaround; tell the user when you use it), and `infowiki.md` in the wiki root.
 **Never valid inside `raw/` or `wiki/`:** `infowiki.md` (it is configuration, not a source or a page).
 
+## Chat extracts
+
+`wiki-update` saves what it records from a conversation as a new source folder `raw/YYYY-MM-DD_chat-<topic>/chat.md` (verbatim extract of the relevant messages only). It is a normal source afterwards: immutable, cited with verbatim quotes and line locators, listed in "Sorgenti raw indicizzate", with its own source page. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
+
 ## Source pages
 
 Each ingested raw source has ONE source page: `wiki/sorgenti/<raw-folder-name>.md` (category `sorgenti`, exempt from the 3-pages rule). It holds: a short summary, 3–7 key takeaways with citations, a "Pagine derivate" list linking the pages created or updated from that source, and what the source does not cover. Other pages link to it from their `sorgenti` field and footnotes' context. Frontmatter as usual (`categoria: sorgenti`).
@@ -53,7 +57,7 @@ Append-only: never modify previous entries. Each entry starts with a parseable p
 Reason / details.
 ```
 
-Entry types: `ingest`, `update`, `delete` (`wiki-query` and `wiki-audit` write nothing, so they have no entry). First entry written by init: `## [date] update | bootstrap struttura iniziale`.
+Entry types: `ingest`, `update` (including `update | chat: <topic>`), `delete` (`wiki-query` and `wiki-audit` write nothing, so they have no entry). First entry written by init: `## [date] update | bootstrap struttura iniziale`.
 
 Appending: the connector has no append tool. Use an exact-match edit (old text = last entry, new text = last entry + new entry) or read-modify-write. Both preserve earlier entries and LF line endings.
 

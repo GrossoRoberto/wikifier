@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.6).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.7).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -19,6 +19,7 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-ingest` | One raw source into a source page plus cited wiki pages, with a backlink sweep (plan approved first) | field-tested (Claude Code) |
 | `wiki-audit` | Read-only check of citations (incl. line locators), uncited claims, contradictions, lint suggestions | field-tested (Claude Code) |
 | `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | field-tested (Claude Code) |
+| `wiki-update` | Bring durable news from the current chat into the wiki (plan approved first; saves a verbatim chat extract in `raw/`). Chats also suggest it at milestones | **beta** (written, sandbox-tested only) |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | field-tested (Claude Code) |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
@@ -134,6 +135,14 @@ Provisional profile, called "v2.1" (`wikifier/references/structure-v21.md`); it 
 ```
 
 Rules enforced by the skill: `raw/` content is never modified; nothing is ever deleted (it is moved to `trash/`); the skill only operates inside the configured root.
+
+## Making every chat aware of the wiki
+
+The skill tells a chat to suggest `wiki-update` at milestones (decision taken, fact corrected, about to close or hand off), but a chat only knows this once the skill is active. To have it from the first message, add two lines to the Project instructions (Claude Desktop) or to `CLAUDE.md` (Claude Code):
+
+```
+This project has a wiki managed by the Wikifier skill. Content that happens in the chat goes into the wiki with `wiki-update` (never `wiki-ingest`, which is only for folders in raw/). At milestones, suggest `wiki-update` in one line; never write without the user's approval.
+```
 
 ## Status and limits
 

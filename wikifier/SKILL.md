@@ -1,6 +1,6 @@
 ---
 name: wikifier
-description: Create and maintain an LLM wiki (Karpathy pattern). Commands: wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest, wiki-query, wiki-audit, wiki-delete. Use to build or fix the wiki.
+description: Wiki skill (Karpathy LLM wiki). Commands: wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest (raw/ sources), wiki-update (news from this chat), wiki-query, wiki-audit, wiki-delete.
 ---
 
 # Wikifier
@@ -20,10 +20,13 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-status` | Quick summary (pages, last operations, pending sources) | 1 | `references/cmd-status.md` |
 | `wiki-ingest` | Turn one raw source into cited wiki pages (plan approved first) | 2 | `references/cmd-ingest.md` |
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
+| `wiki-update` | Bring durable news from THIS chat into the wiki (plan approved first; saves a chat extract in `raw/`). Beta | 2 | `references/cmd-update.md` |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | 2 | `references/cmd-query.md` |
 | `wiki-delete` | Soft-delete pages: move them into `trash/`, fix index and links (plan approved first) | 3 | `references/cmd-delete.md` |
 
-Any other `wiki-*` command is not part of Wikifier (for example update, merge, rename): say so plainly and stop. Never improvise a procedure.
+`wiki-ingest` is only for folders already in `raw/`. Anything that happened in the chat goes through `wiki-update`, never through ingest.
+
+Any other `wiki-*` command is not part of Wikifier (for example merge, rename): say so plainly and stop. Never improvise a procedure.
 
 ## Mandatory sequence for EVERY command
 
@@ -36,8 +39,8 @@ Any other `wiki-*` command is not part of Wikifier (for example update, merge, r
 ## Hard rules
 
 - **Sandbox:** operate only inside the resolved wiki root. Other folders, other wikis and the rest of the filesystem do not exist for you.
-- **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation.
-- **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`. Exception: `wiki-ingest` and `wiki-delete` show a plan first (always, in both modes); once the user approves it, that approval covers every write listed in the plan (pages, index, log). Anything NOT in the plan still needs its own confirmation under `every-write`.
+- **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation. The one other addition allowed is a NEW chat-extract folder created by `wiki-update`; existing raw folders are never touched.
+- **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`. Exception: `wiki-ingest`, `wiki-update` and `wiki-delete` show a plan first (always, in both modes); once the user approves it, that approval covers every write listed in the plan (pages, index, log). Anything NOT in the plan still needs its own confirmation under `every-write`.
 - **No deletion:** the filesystem connector has none. "Delete" means soft-delete into `trash/` (a dated unique name). `trash/` is ignored by index, log, check and ingest.
 - **Do not invent data.** If unsure, mark `> ❓ DA VERIFICARE` in the page or say you don't know.
 - **One session at a time** on a wiki (it may be a shared network drive). Do not start parallel sessions on the same root.
@@ -45,6 +48,10 @@ Any other `wiki-*` command is not part of Wikifier (for example update, merge, r
 - **Language:** talk to the user in the `language` variable (default `it`). Wiki content follows the same language; technical terms stay in the original language.
 - After any write operation, re-read what you wrote to verify it. Log writes to `log.md` (see `references/structure-v21.md`).
 - Keep a short session report in markdown when the user or project asks for one.
+
+## Working inside a wiki chat
+
+When a chat is working on this wiki (the skill is active, `infowiki.md` found), keep in mind from the start that the wiki must evolve with the conversation: important things that happen here belong in it. Do not write on your own. Instead, at natural milestones, suggest ONE line: "Questo mi sembra da registrare nella wiki: vuoi che faccia `wiki-update`?" Milestones: a decision is taken, a fact is established or corrected, the user is about to close, run a handoff, clear the context or switch task. Suggest at most once per milestone; if the user declines or ignores, do not repeat until a new milestone. Never suggest for small talk or minor steps. The user decides when the update runs.
 
 ## Current limits
 
