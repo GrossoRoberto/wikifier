@@ -76,7 +76,7 @@ check("_wikifier" in ck and "..._chat-..." in ck and "flat" in txt, "check flags
 ini = (SK/"references/cmd-init.md").read_text()
 check("`_wikifier/`" in ini and "whole structure" in ini, "init creates the whole structure")
 check("born from `wiki-ingest`" in txt and "`wiki-update`" in txt, "SKILL.md: how a wiki lives")
-check("required items" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
+check("required item" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
 
 check("Saved plans and reports" in st and "NOT an approval" in st and "piano-ingest" in st and "never overwrite" in st, "structure: saved plans/reports rules")
 check(all("Saved plans and reports" in (SK/"references"/f).read_text() for f in ("cmd-ingest.md","cmd-update.md","cmd-delete.md","cmd-audit.md")), "ingest/update/delete/audit point to the saved-report rules")
