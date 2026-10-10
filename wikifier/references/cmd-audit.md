@@ -1,6 +1,6 @@
 # wiki-audit
 
-READ-ONLY check of the wiki's content against `raw/`. Allowed in S3/S4 (see `preflight.md`). Writes nothing, not even to `log.md`, unless the user explicitly asks to save the report; the report is shown to the user (and saved only if they ask, following "Saved plans and reports" in `structure-v21.md`: `_wikifier/report/YYYY-MM-DD_audit-<topic>.md`, the only file it may then write; confirm first). Never say "verified" for something that needed judgment: use the statuses below.
+READ-ONLY check of the wiki's content against `raw/`. Allowed in S3/S4 (see `preflight.md`). Writes nothing, not even to `log.md`, unless the user explicitly asks to save the report; the report is shown to the user (and saved only if they ask, following "Saved plans and reports" in `structure-v21.md`: `_wikifier/YYYY-MM-DD_audit-<topic>.md`, the only file it may then write; confirm first). Never say "verified" for something that needed judgment: use the statuses below.
 
 ## Scope
 

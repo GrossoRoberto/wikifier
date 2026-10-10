@@ -8,7 +8,8 @@ Citation format checked (one per footnote definition, see references/structure-v
   [^n]: raw/<folder>/<file> — "<verbatim quote>" (<locator>)
   [^n]: [synthesis] <paths> — explanation          (skipped, needs judgment)
 
-Sources may be under raw/ or _wikifier/chat/ (chat extracts); anything else is OUTSIDE_ROOT.
+Sources may be under raw/ or be a chat extract directly inside _wikifier/ (YYYY-MM-DD_chat-<topic>.md);
+anything else (including saved plans and reports in _wikifier/) is OUTSIDE_ROOT.
 A quote is OK only if, after collapsing whitespace runs to one space and NFC
 normalisation, it occurs as an exact (case-sensitive) substring of the raw file.
 This proves the text EXISTS in the source. It does NOT prove the page's claim is
@@ -29,6 +30,7 @@ TEXT_EXT = {".md", ".txt", ".csv", ".json", ".yaml", ".yml", ".html", ".htm", ".
 DEF = re.compile(r"^\[\^([^\]]+)\]:\s*(.*)$")
 QUOTE = re.compile(r'^(?P<path>.+?)\s+—\s+"(?P<q>.+)"\s*(?:\((?P<loc>[^()]*)\))?\s*$')
 REF = re.compile(r"\[\^([^\]]+)\](?!:)")
+CHAT_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}_chat-.+\.md$")
 LINES = re.compile(r"(?<![A-Za-z0-9])L(\d+)(?:\s*-\s*L?(\d+))?(?![A-Za-z0-9])")
 BAD = {"NOT_FOUND", "WRONG_LINES", "FILE_MISSING", "UNSUPPORTED_TYPE", "MALFORMED", "OUTSIDE_ROOT", "ORPHAN_REF"}
 
@@ -65,8 +67,10 @@ def check_page(root, page):
             continue
         p = pathlib.Path(m.group("path").strip())
         target = (root / p).resolve()
-        allowed = [(root / "raw").resolve(), (root / "_wikifier" / "chat").resolve()]
-        if not any(target.is_relative_to(a) for a in allowed):
+        in_raw = target.is_relative_to((root / "raw").resolve())
+        is_chat = (target.parent == (root / "_wikifier").resolve()
+                   and CHAT_NAME.match(target.name) is not None)
+        if not (in_raw or is_chat):
             out.append(("OUTSIDE_ROOT", rel, tag, str(p)))
             continue
         if not target.is_file():

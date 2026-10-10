@@ -65,16 +65,16 @@ shutil.rmtree(ow)
 up = (SK/"references/cmd-update.md").read_text()
 check("Working inside a wiki chat" in txt and "at most once per milestone" in txt, "SKILL.md: proactive suggestion rule")
 check("never through ingest" in txt and "NOT `wiki-ingest`" in up, "update vs ingest routing")
-check("_wikifier/chat/YYYY-MM-DD_<topic>.md" in up and "NEVER write in `raw/`" in up and "BOTH confirmation modes" in up and "Coperto fino a" in up and "CORRETTO" in up, "update: extract, plan, watermark, correction block")
+check("_wikifier/YYYY-MM-DD_chat-<topic>.md" in up and "NEVER write in `raw/`" in up and "BOTH confirmation modes" in up and "Coperto fino a" in up and "CORRETTO" in up, "update: extract, plan, watermark, correction block")
 check("NEVER write secrets" in up, "update: no secrets")
 check("`update`, `delete`" in pf_ if (pf_ := (SK/"references/preflight.md").read_text()) else False, "preflight: update is a write command")
 check("Chat extracts" in st and "_wikifier/" in st and "Estratti di chat" in st, "structure: system folder + chat extracts")
 check("No stray files" in txt and "_wikifier/" in txt and "no exception" in txt, "SKILL.md: no stray files, raw no exceptions")
 check("raw/YYYY-MM-DD_chat" not in "".join(f.read_text() for f in (SK/"references").glob("*.md")), "no leftover chat-in-raw instructions")
-check("_wikifier" in ck and "..._chat-..." in ck, "check flags chat folders in raw and tolerates _wikifier")
+check("_wikifier" in ck and "..._chat-..." in ck and "flat" in txt, "check flags chat folders in raw and tolerates _wikifier")
 
 ini = (SK/"references/cmd-init.md").read_text()
-check("_wikifier/chat" in ini and "_wikifier/report" in ini and "whole structure" in ini, "init creates the whole structure")
+check("`_wikifier/`" in ini and "whole structure" in ini, "init creates the whole structure")
 check("born from `wiki-ingest`" in txt and "`wiki-update`" in txt, "SKILL.md: how a wiki lives")
 check("required items" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
 
@@ -82,7 +82,7 @@ check("Saved plans and reports" in st and "NOT an approval" in st and "piano-ing
 check(all("Saved plans and reports" in (SK/"references"/f).read_text() for f in ("cmd-ingest.md","cmd-update.md","cmd-delete.md","cmd-audit.md")), "ingest/update/delete/audit point to the saved-report rules")
 
 # ---- 2. reference preflight ----
-REQ = ["index.md","log.md","raw","wiki","trash","_wikifier/chat","_wikifier/report"]
+REQ = ["index.md","log.md","raw","wiki","trash","_wikifier"]
 def parse_info(p):
     if not p.exists(): return None
     m = re.match(r"---\n(.*?)\n---", p.read_text(), re.S)
@@ -127,7 +127,7 @@ def mk(name, info=True, root=True, req=None, index="ok", pending=False, listed_m
     return base/"infowiki.md"
 for k, (p, exp) in {
   "S0 no infowiki": (mk("a", info=False), "S0"), "S1 root missing": (mk("b", root=False), "S1"),
-  "S2 no trash": (mk("c", req=["index.md","log.md","raw","wiki","_wikifier/chat","_wikifier/report"]), "S2"),
+  "S2 no trash": (mk("c", req=["index.md","log.md","raw","wiki","_wikifier"]), "S2"),
   "S2 old wiki without _wikifier": (mk("c2", req=["index.md","log.md","raw","wiki","trash"]), "S2"),
   "S3 page not in index": (mk("d", index="stale"), "S3"), "S4 healthy": (mk("e"), "S4"),
   "S4 with pending raw (must NOT be S3)": (mk("f", pending=True), "S4"),
@@ -141,11 +141,11 @@ w = tmp/"vw"; (w/"wiki/cat").mkdir(parents=True); (w/"raw/2026-10-01_n").mkdir(p
 (w/"raw/2026-10-01_n/notes.md").write_text("Pump A.\nNominal speed is\n  1450   rpm  at 50 Hz.\nService every 2000 hours.\n", encoding="utf-8")
 (w/"raw/2026-10-01_n/scan.pdf").write_bytes(b"%PDF-1.4")
 (w/"secret.md").write_text("Outside raw: nominal speed is 1450 rpm")
-(w/"_wikifier/chat").mkdir(parents=True); (w/"_wikifier/chat/2026-10-10_t.md").write_text("Intro\nDecision: use 1480 rpm as reference.\n")
+(w/"_wikifier/chat").mkdir(parents=True); (w/"_wikifier/2026-10-10_chat-t.md").write_text("Intro\nDecision: use 1480 rpm as reference.\n"); (w/"_wikifier/chat/2026-10-10_old.md").write_text("Decision: use 1480 rpm as reference.\n"); (w/"_wikifier/2026-10-10_audit-all.md").write_text("Decision: use 1480 rpm as reference.\n")
 page = '''---
 titolo: P
 ---
-Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9] L ok.[^11] L wrong.[^12] L span.[^13] L range.[^14] Chat.[^15] Chat wrong.[^16] Wiki as source.[^17]
+Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9] L ok.[^11] L wrong.[^12] L span.[^13] L range.[^14] Chat.[^15] Chat wrong.[^16] Wiki as source.[^17] Report as source.[^18] Legacy subfolder.[^19]
 
 [^1]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (line 2)
 [^2]: raw/2026-10-01_n/notes.md — "nominal speed is 1480 rpm" (line 2)
@@ -156,9 +156,11 @@ Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Esc
 [^7]: [synthesis] raw/2026-10-01_n/notes.md — my inference
 [^8]: raw/2026-10-01_n/notes.md — "NOMINAL SPEED IS 1450 RPM" (line 2)
 [^10]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (line 3)
-[^15]: _wikifier/chat/2026-10-10_t.md — "use 1480 rpm as reference" (L2)
-[^16]: _wikifier/chat/2026-10-10_t.md — "use 1480 rpm as reference" (L1)
+[^15]: _wikifier/2026-10-10_chat-t.md — "use 1480 rpm as reference" (L2)
+[^16]: _wikifier/2026-10-10_chat-t.md — "use 1480 rpm as reference" (L1)
 [^17]: wiki/cat/p.md — "Ok whitespace" (L1)
+[^18]: _wikifier/2026-10-10_audit-all.md — "use 1480 rpm as reference" (L1)
+[^19]: _wikifier/chat/2026-10-10_old.md — "use 1480 rpm as reference" (L1)
 [^11]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (L4)
 [^12]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (section 3, L1-2)
 [^13]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (L2-3)
@@ -170,7 +172,7 @@ r = run(w); got = {}; allst = {}
 for l in r.stdout.splitlines():
     s, _, tag, _ = l.split("\t", 3); got.setdefault(tag, s) if s != "UNUSED_DEF" else None; allst.setdefault(tag, set()).add(s)
 exp = {"[^1]":"OK","[^2]":"NOT_FOUND","[^3]":"FILE_MISSING","[^4]":"UNSUPPORTED_TYPE","[^5]":"MALFORMED",
-       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK","[^11]":"OK","[^12]":"WRONG_LINES","[^13]":"OK","[^14]":"WRONG_LINES","[^15]":"OK","[^16]":"WRONG_LINES","[^17]":"OUTSIDE_ROOT"}
+       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK","[^11]":"OK","[^12]":"WRONG_LINES","[^13]":"OK","[^14]":"WRONG_LINES","[^15]":"OK","[^16]":"WRONG_LINES","[^17]":"OUTSIDE_ROOT","[^18]":"OUTSIDE_ROOT","[^19]":"OUTSIDE_ROOT"}
 for k, v in exp.items(): check(got.get(k) == v, f"verify_quotes {k}: expected {v}, got {got.get(k)}")
 check("UNUSED_DEF" in allst["[^10]"], "unused definition flagged")
 check(r.returncode == 1, "exit 1 when blocking findings exist")

@@ -11,12 +11,15 @@ Layout taken from the project's SCHEMA v2.1, tested on the field with the filesy
 ├── raw/              immutable sources
 ├── wiki/             pages written and maintained by Claude
 ├── trash/            soft-delete bin (ignored by everything); names `YYYY-MM-DD_<category>_<file>.md`
-└── _wikifier/        system folder (ignored by index, ingest and the alignment check, like `trash/`)
-    ├── chat/         chat extracts written by wiki-update: YYYY-MM-DD_<topic>.md, never edited afterwards
-    └── report/       plans, audit and other reports, ONLY when the user asks to save them: YYYY-MM-DD_<type>-<topic>.md
+└── _wikifier/        system folder, NO subfolders (ignored by index, ingest and the alignment check, like `trash/`)
 ```
 
-The whole tree above is created by `wiki-init` (empty folders). `_wikifier/chat/` and `_wikifier/report/` are required items: a wiki created before they existed is state S2 until `wiki-check err` adds them. No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
+`_wikifier/` holds two kinds of files, told apart by the word after the date:
+- `YYYY-MM-DD_chat-<topic>.md`: chat extracts written by `wiki-update`. They are sources: never edited afterwards, cited by pages.
+- `YYYY-MM-DD_<type>-<topic>.md` with type `piano-ingest`, `piano-update`, `piano-delete`, `audit` or `check`: plans and reports, ONLY when the user asks to save them. They are not sources: never cited.
+The word `chat` is reserved for extracts.
+
+The whole tree above is created by `wiki-init` (empty folders). `_wikifier/` is a required item: a wiki created before it existed is state S2 until `wiki-check err` adds it. No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
 
 Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wiki/` allows at most 2 levels: `wiki/<category>/<page>.md`. Categories and page files are lowercase, hyphen-separated, no spaces, `.md`. Create a category only when at least 3 pages share a distinct domain.
 
@@ -25,13 +28,13 @@ Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wi
 
 ## Chat extracts
 
-`wiki-update` saves what it records from a conversation as `_wikifier/chat/YYYY-MM-DD_<topic>.md` (verbatim extract of the relevant messages only; if the name exists add `-2`). NEVER in `raw/`, which no command writes to. After writing, the file is not edited again; it is cited with verbatim quotes and line locators, listed in the index section "Estratti di chat", and has its own source page `wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
+`wiki-update` saves what it records from a conversation as `_wikifier/YYYY-MM-DD_chat-<topic>.md` (verbatim extract of the relevant messages only; if the name exists add `-2`). NEVER in `raw/`, which no command writes to. After writing, the file is not edited again; it is cited with verbatim quotes and line locators, listed in the index section "Estratti di chat", and has its own source page `wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
 
 ## Saved plans and reports
 
 Default: plans (ingest, update, delete) and reports (audit, check) are shown in the chat and NOT saved. Only when the user explicitly asks to keep one:
 
-- File: `_wikifier/report/YYYY-MM-DD_<type>-<topic>.md`. Types: `piano-ingest`, `piano-update`, `piano-delete`, `audit`, `check`. Example: `2026-10-10_piano-ingest-pump-notes.md`. If the name exists add `-2`, `-3`; never overwrite.
+- File: `_wikifier/YYYY-MM-DD_<type>-<topic>.md`. Types: `piano-ingest`, `piano-update`, `piano-delete`, `audit`, `check`. Example: `2026-10-10_piano-ingest-pump-notes.md`. If the name exists add `-2`, `-3`; never overwrite.
 - Content: frontmatter (`tipo`, `comando`, `data`, `ambito`) followed by exactly what was shown in the chat. Nothing is added or invented.
 - One file per run, written only after the user asks, and not edited afterwards.
 - Not listed in `index.md`, not written to `log.md`, never cited as a source, ignored by ingest, audit and query.
@@ -59,10 +62,10 @@ Aggiornato: YYYY-MM-DD | Pagine totali: N | Sorgenti raw: N
 - `raw/YYYY-MM-DD_topic/` — description, processed on: date
 
 ## Estratti di chat
-- `_wikifier/chat/YYYY-MM-DD_topic.md` — description, recorded on: date
+- `_wikifier/YYYY-MM-DD_chat-topic.md` — description, recorded on: date
 ```
 
-The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. A `.gitkeep` inside `_wikifier/chat/` or `_wikifier/report/` is not an extract or a report. The counts in the header refer to raw sources only.
+The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. A `.gitkeep` inside `_wikifier/` is not an extract or a report. The counts in the header refer to raw sources only.
 
 Empty skeleton (used by init): same header with `Pagine totali: 0 | Sorgenti raw: 0` and the section headings without entries.
 

@@ -9,7 +9,7 @@ Runs `wiki-check`, then proposes and applies repairs. Allowed in S2 and S3. In S
 
 | Finding | Repair |
 |---|---|
-| Missing `raw/`, `wiki/`, `trash/`, `_wikifier/chat/`, `_wikifier/report/` | Create the empty folder (wikis made before v1.8 lack the `_wikifier/` ones: this is the normal migration) |
+| Missing `raw/`, `wiki/`, `trash/`, `_wikifier/` | Create the empty folder (wikis made before v1.8 lack `_wikifier/`: this is the normal migration) |
 | Missing `index.md` | Create the empty skeleton, then rebuild (next row) |
 | `index.md` misaligned (pages missing from the index, dead links, wrong counts) | Rebuild the affected entries. Title and description come from each page's frontmatter (`titolo`) and its first sentence; if none can be derived, ask the user or mark `> ❓ DA VERIFICARE`. Never invent descriptions |
 | Missing `log.md` | Create it with a first `update` entry describing the repair |
