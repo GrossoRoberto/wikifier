@@ -20,7 +20,7 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-status` | Quick summary (pages, last operations, pending sources) | 1 | `references/cmd-status.md` |
 | `wiki-ingest` | Turn one raw source into cited wiki pages (plan approved first) | 2 | `references/cmd-ingest.md` |
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
-| `wiki-update` | Bring durable news from THIS chat into the wiki (plan approved first; saves a chat extract in `raw/`). Beta | 2 | `references/cmd-update.md` |
+| `wiki-update` | Bring durable news from THIS chat into the wiki (plan approved first; saves a chat extract in `_wikifier/chat/`). Beta | 2 | `references/cmd-update.md` |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | 2 | `references/cmd-query.md` |
 | `wiki-delete` | Soft-delete pages: move them into `trash/`, fix index and links (plan approved first) | 3 | `references/cmd-delete.md` |
 
@@ -39,8 +39,9 @@ Any other `wiki-*` command is not part of Wikifier (for example merge, rename): 
 ## Hard rules
 
 - **Sandbox:** operate only inside the resolved wiki root. Other folders, other wikis and the rest of the filesystem do not exist for you.
-- **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation. The one other addition allowed is a NEW chat-extract folder created by `wiki-update`; existing raw folders are never touched.
+- **`raw/` is immutable:** never edit, move or delete anything inside it. Reading it is allowed and expected (ingest and audit read it). Creating the EMPTY `raw/` folder at bootstrap is required, not a violation.  No command writes there, with no exception (chat extracts go to `_wikifier/chat/`).
 - **Confirmations:** follow `confirmations` from `infowiki.md` (`every-write` = ask before each write; `session-ok` = one confirmation per session, then proceed). If the variable is missing, use `every-write`. Exception: `wiki-ingest`, `wiki-update` and `wiki-delete` show a plan first (always, in both modes); once the user approves it, that approval covers every write listed in the plan (pages, index, log). Anything NOT in the plan still needs its own confirmation under `every-write`.
+- **No stray files:** create nothing in the wiki root except `index.md`, `log.md`, `raw/`, `wiki/`, `trash/` and the system folder `_wikifier/` (`chat/` for chat extracts, `report/` for plans and reports the user explicitly asks to save). Plans, audits and notes are shown in the chat, never written as files unless asked.
 - **No deletion:** the filesystem connector has none. "Delete" means soft-delete into `trash/` (a dated unique name). `trash/` is ignored by index, log, check and ingest.
 - **Do not invent data.** If unsure, mark `> ❓ DA VERIFICARE` in the page or say you don't know.
 - **One session at a time** on a wiki (it may be a shared network drive). Do not start parallel sessions on the same root.

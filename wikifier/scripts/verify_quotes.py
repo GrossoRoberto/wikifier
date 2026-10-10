@@ -8,6 +8,7 @@ Citation format checked (one per footnote definition, see references/structure-v
   [^n]: raw/<folder>/<file> — "<verbatim quote>" (<locator>)
   [^n]: [synthesis] <paths> — explanation          (skipped, needs judgment)
 
+Sources may be under raw/ or _wikifier/chat/ (chat extracts); anything else is OUTSIDE_ROOT.
 A quote is OK only if, after collapsing whitespace runs to one space and NFC
 normalisation, it occurs as an exact (case-sensitive) substring of the raw file.
 This proves the text EXISTS in the source. It does NOT prove the page's claim is
@@ -64,10 +65,8 @@ def check_page(root, page):
             continue
         p = pathlib.Path(m.group("path").strip())
         target = (root / p).resolve()
-        raw_root = (root / "raw").resolve()
-        try:
-            target.relative_to(raw_root)
-        except ValueError:
+        allowed = [(root / "raw").resolve(), (root / "_wikifier" / "chat").resolve()]
+        if not any(target.is_relative_to(a) for a in allowed):
             out.append(("OUTSIDE_ROOT", rel, tag, str(p)))
             continue
         if not target.is_file():

@@ -13,14 +13,24 @@ Layout taken from the project's SCHEMA v2.1, tested on the field with the filesy
 └── trash/            soft-delete bin (ignored by everything); names `YYYY-MM-DD_<category>_<file>.md`
 ```
 
+Optional system folder (NOT a required item, created on first use, ignored by index, ingest and preflight like `trash/`):
+
+```
+<root>/_wikifier/
+├── chat/             chat extracts written by wiki-update: YYYY-MM-DD_<topic>.md, never edited afterwards
+└── report/           plans, audit and other reports, ONLY when the user asks to save them: YYYY-MM-DD_<type>-<topic>.md
+```
+
+No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
+
 Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wiki/` allows at most 2 levels: `wiki/<category>/<page>.md`. Categories and page files are lowercase, hyphen-separated, no spaces, `.md`. Create a category only when at least 3 pages share a distinct domain.
 
-**Tolerated files (not reported as stray, ignored by index and ingest):** `.gitkeep` placed inside a required folder (some toolsets cannot create empty folders, so it is the accepted workaround; tell the user when you use it), and `infowiki.md` in the wiki root.
+**Tolerated files (not reported as stray, ignored by index and ingest):** the `_wikifier/` system folder (above); `.gitkeep` placed inside a required folder (some toolsets cannot create empty folders, so it is the accepted workaround; tell the user when you use it), and `infowiki.md` in the wiki root.
 **Never valid inside `raw/` or `wiki/`:** `infowiki.md` (it is configuration, not a source or a page).
 
 ## Chat extracts
 
-`wiki-update` saves what it records from a conversation as a new source folder `raw/YYYY-MM-DD_chat-<topic>/chat.md` (verbatim extract of the relevant messages only). It is a normal source afterwards: immutable, cited with verbatim quotes and line locators, listed in "Sorgenti raw indicizzate", with its own source page. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
+`wiki-update` saves what it records from a conversation as `_wikifier/chat/YYYY-MM-DD_<topic>.md` (verbatim extract of the relevant messages only; if the name exists add `-2`). NEVER in `raw/`, which no command writes to. After writing, the file is not edited again; it is cited with verbatim quotes and line locators, listed in the index section "Estratti di chat", and has its own source page `wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
 
 ## Source pages
 
@@ -42,7 +52,12 @@ Aggiornato: YYYY-MM-DD | Pagine totali: N | Sorgenti raw: N
 
 ## Sorgenti raw indicizzate
 - `raw/YYYY-MM-DD_topic/` — description, processed on: date
+
+## Estratti di chat
+- `_wikifier/chat/YYYY-MM-DD_topic.md` — description, recorded on: date
 ```
+
+The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. The counts in the header refer to raw sources only.
 
 Empty skeleton (used by init): same header with `Pagine totali: 0 | Sorgenti raw: 0` and the section headings without entries.
 
