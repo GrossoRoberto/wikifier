@@ -22,9 +22,10 @@ Read-only self-diagnosis. It never writes anything: no files, no log entry.
 | 11 | Orphan pages: a page under `wiki/` that no OTHER page under `wiki/` links to (links from `index.md` do not count). List them | ⚠️ |
 | 12 | Every raw source listed in `index.md` has its source page `wiki/sorgenti/<folder>.md` (wikis ingested before source pages existed will show this: report as info, not an error) | ⚠️ |
 
-| 13 | Every extract listed under "Estratti di chat" exists in `_wikifier/` (skip if the section is absent) | ⚠️ |
+| 13 | Every extract and every `allegato:` line listed under "Estratti di chat" exists in `_wikifier/` (skip if the section is absent) | ⚠️ |
+| 14 | Every `*_allegato-*` file in `_wikifier/` is listed in `index.md` under an extract with the same date and topic, and that extract exists (an attachment nobody can find is an orphan). Names follow `YYYY-MM-DD_allegato-<topic>--<name>.<ext>` | ⚠️ |
 
-Checks 5–9 and 11–13 need a populated wiki; on an empty one they pass trivially.
+Checks 5–9 and 11–14 need a populated wiki; on an empty one they pass trivially.
 This phase does not verify page content (contradictions, citations): that is `wiki-audit`.
 
 ## Output (in the user's language, short)

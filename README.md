@@ -4,7 +4,7 @@ An [Agent Skill](https://code.claude.com/docs/en/skills) that builds and maintai
 
 One skill, several commands. Before running anything, every command checks whether it can run in the wiki's current state (for example `wiki-audit` before `wiki-init` is refused with a clear error).
 
-> **Status: early (v1.10).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
+> **Status: early (v1.11).** All commands were run in the field on **Claude Code** by the author, who reports they work (no detailed log is published). Claude Desktop beyond the first test, Pi and the Project-knowledge route are still unverified. See [Status and limits](#status-and-limits) for exactly what has and has not been tested.
 
 ## Commands
 
@@ -19,8 +19,9 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-ingest` | One raw source into a source page plus cited wiki pages, with a backlink sweep (plan approved first) | field-tested (Claude Code) |
 | `wiki-audit` | Read-only check of citations (incl. line locators), uncited claims, contradictions, lint suggestions | field-tested (Claude Code) |
 | `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | field-tested (Claude Code) |
-| `wiki-update` | Bring durable news from the current chat into the wiki (plan approved first; saves a verbatim chat extract in `_wikifier/`). Chats also suggest it at milestones | **beta** (written, sandbox-tested only) |
+| `wiki-update` | Bring durable news from the current chat into the wiki (plan approved first; saves a verbatim chat extract in `_wikifier/`, plus the files generated in the chat as attachments, copied unchanged). Chats also suggest it at milestones | **beta** (written, sandbox-tested only; attachments new in v1.11) |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | field-tested (Claude Code) |
+| `wiki-dig` | Occasional deep search in the sources (chat extracts and attachments in `_wikifier/`, `raw/`) when the pages are not enough: "when did we decide X?", "why Y?". Writes nothing. Also triggered by "scava nella wiki", "storico" | **beta** (new in v1.11, written only) |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -138,7 +139,7 @@ Rules enforced by the skill: `raw/` content is never modified; nothing is ever d
 
 ## Folders the skill writes to
 
-Besides `index.md`, `log.md` and `wiki/`, the skill may write to `trash/` (soft-deleted pages) and to the system folder `_wikifier/` (created, flat, by `wiki-init` together with the rest of the structure; wikis made before v1.8 get it from `wiki-check err`): `chat/` for chat extracts made by `wiki-update`, `report/` only for plans or reports you explicitly ask to save. It never writes to `raw/` (immutable, no exceptions) and creates no other files in the wiki root: `wiki-check` flags any it finds.
+Besides `index.md`, `log.md` and `wiki/`, the skill may write to `trash/` (soft-deleted pages) and to the system folder `_wikifier/` (created by `wiki-init` together with the rest of the structure; wikis made before v1.8 get it from `wiki-check err`). `_wikifier/` is flat, with no subfolders; the word after the date tells the files apart: `YYYY-MM-DD_chat-<topic>.md` for chat extracts made by `wiki-update`, `YYYY-MM-DD_allegato-<topic>--<name>.<ext>` for the files generated in that chat (attachments, a safety net searched by `wiki-dig`), and `YYYY-MM-DD_<type>-<topic>.md` only for plans or reports you explicitly ask to save. It never writes to `raw/` (immutable, no exceptions) and creates no other files in the wiki root: `wiki-check` flags any it finds.
 
 ## Making every chat aware of the wiki
 
@@ -155,9 +156,11 @@ What was actually tested:
 - Static checks of the skill (frontmatter, description length, links between files, line endings) and of the state definitions S0-S4 on synthetic wikis, with a reference checker written by the author. This validates the *definitions*, not the model's behaviour.
 - One field test on Claude Desktop (a cloud session linked to a computer): activation from the description, S0 to draft to bootstrap to S4, `index.md`/`log.md` verified byte for byte. It led to the v1.1 fixes.
 - Field tests on Claude Code by the author after v1.6: all commands, reported working. A first Code run (v1.3) exposed the loose-files-in-`raw/` case and the too-many-confirmations issue, fixed in v1.4.
-- `scripts/verify_quotes.py` (quote exists in the raw file) tested on a synthetic wiki with seeded errors (`tests/test_wikifier.py`, run `python tests/test_wikifier.py`). A field-test kit for ingest/audit is in `tests/field/`.
+- `scripts/verify_quotes.py` (quote exists in the source: raw files, chat extracts, chat attachments, code files included) tested on a synthetic wiki with seeded errors (`tests/test_wikifier.py`, run `python tests/test_wikifier.py`). A field-test kit for ingest/audit is in `tests/field/`.
 
 Not tested or not verified:
+
+- v1.11 additions (chat attachments in `wiki-update`, the `wiki-dig` command): written and covered by the sandbox tests only, not yet run in the field.
 
 - All commands were run on Claude Code by the author, who reports they work; no detailed log is published here, and it is one tester on one setup. On Claude Desktop only the phase 1 commands were run. The script only proves a quote exists in the source, not that it supports the claim; that part is the model's judgment and is reported as such.
 - A fix in v1.3: a `raw/` folder not yet listed in the index used to make the wiki state S3 and block ingest; it is now "pending ingest" and the state stays S4.
@@ -209,5 +212,7 @@ The skill was written from scratch from these descriptions; no code was copied. 
 - **Claude Code e Pi:** nella cartella da cui lanci l'agente (non cerca nelle cartelle superiori).
 - Se ne esistono più copie vale la prima in quest'ordine: Project knowledge, allegato, cartella di lancio.
 - Provato sul campo finora: solo l'allegato in chat su Desktop.
+
+**Novità v1.11:** `wiki-update` salva anche i file generati nella chat (report, appunti, codice, HTML) come allegati in `_wikifier/`, copiati senza modifiche; il nuovo comando `wiki-dig` ("scava nella wiki", "storico") li cerca insieme agli estratti e a `raw/` quando le pagine non bastano. Entrambi scritti e provati solo in sandbox.
 
 **Limiti:** è una versione iniziale. Non sono ancora stati provati sul campo `wiki-check err`, `wiki-status`, gli stati S1 e S3, né l'uso su Pi. La struttura delle cartelle ("v2.1") è provvisoria.

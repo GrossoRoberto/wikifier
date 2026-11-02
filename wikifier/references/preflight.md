@@ -17,7 +17,7 @@ Evaluate in order S0 → S1 → S2 → S3 and stop at the first that applies.
 ## Cost control
 
 - **Mini-check (every command):** infowiki lookup, root reachability, existence of the required items. About 2–4 listings/reads.
-- **Alignment check (S3 vs S4):** run only for write commands, `wiki-check`, `wiki-check err`, `wiki-status`. Read commands (`query`, `audit`) skip it: if the mini-check passes they are treated as S4, with a note that the index freshness was not verified.
+- **Alignment check (S3 vs S4):** run only for write commands, `wiki-check`, `wiki-check err`, `wiki-status`. Read commands (`query`, `dig`, `audit`) skip it: if the mini-check passes they are treated as S4, with a note that the index freshness was not verified.
 
 Alignment check: every `*.md` under `wiki/` appears in `index.md`, every link in `index.md` points to an existing file, and every raw source listed under "Sorgenti raw indicizzate" (see `structure-v21.md`) still exists in `raw/`. A `raw/` folder that is NOT listed is **pending ingest**: that is the normal state before `wiki-ingest` and does NOT break alignment. `trash/` is excluded everywhere.
 
@@ -29,7 +29,7 @@ Alignment check: every `*.md` under `wiki/` appears in `index.md`, every link in
 | `wiki-check` | error | report only (root unreachable) | allowed | allowed | allowed |
 | `wiki-check err` | error | error → `wiki-init` | allowed | allowed | nothing to repair |
 | `wiki-status` | error | error | error → `wiki-check err` | allowed (warn index) | allowed |
-| read commands (`query`, `audit`) | error | error | error | allowed (warn index) | allowed |
+| read commands (`query`, `dig`, `audit`) | error | error | error | allowed (warn index) | allowed |
 | write commands (`ingest`, `update`, `delete`) | error | error | error | error → `wiki-check err` | allowed |
 
 *Draft mode: no wiki is created; the skill proposes a filled `infowiki.md` (see `cmd-init.md`).

@@ -8,7 +8,8 @@ Citation format checked (one per footnote definition, see references/structure-v
   [^n]: raw/<folder>/<file> — "<verbatim quote>" (<locator>)
   [^n]: [synthesis] <paths> — explanation          (skipped, needs judgment)
 
-Sources may be under raw/ or be a chat extract directly inside _wikifier/ (YYYY-MM-DD_chat-<topic>.md);
+Sources may be under raw/, or directly inside _wikifier/ as a chat extract (YYYY-MM-DD_chat-<topic>.md)
+or a chat attachment (YYYY-MM-DD_allegato-<topic>--<name>.<ext>);
 anything else (including saved plans and reports in _wikifier/) is OUTSIDE_ROOT.
 A quote is OK only if, after collapsing whitespace runs to one space and NFC
 normalisation, it occurs as an exact (case-sensitive) substring of the raw file.
@@ -26,11 +27,15 @@ Exit code 0 only if no line is NOT_FOUND/WRONG_LINES/FILE_MISSING/UNSUPPORTED_TY
 """
 import re, sys, unicodedata, pathlib
 
-TEXT_EXT = {".md", ".txt", ".csv", ".json", ".yaml", ".yml", ".html", ".htm", ".xml", ".log", ".tsv"}
+TEXT_EXT = {".md", ".txt", ".csv", ".json", ".yaml", ".yml", ".html", ".htm", ".xml", ".log", ".tsv",
+            # code and config, mostly found in chat attachments
+            ".py", ".js", ".ts", ".css", ".sh", ".ps1", ".bat", ".sql", ".scl", ".groovy",
+            ".ino", ".c", ".cpp", ".h", ".java", ".kt", ".ini", ".toml", ".cfg", ".conf"}
 DEF = re.compile(r"^\[\^([^\]]+)\]:\s*(.*)$")
 QUOTE = re.compile(r'^(?P<path>.+?)\s+—\s+"(?P<q>.+)"\s*(?:\((?P<loc>[^()]*)\))?\s*$')
 REF = re.compile(r"\[\^([^\]]+)\](?!:)")
 CHAT_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}_chat-.+\.md$")
+ATTACH_NAME = re.compile(r"^\d{4}-\d{2}-\d{2}_allegato-.+--.+\.[A-Za-z0-9]+$")
 LINES = re.compile(r"(?<![A-Za-z0-9])L(\d+)(?:\s*-\s*L?(\d+))?(?![A-Za-z0-9])")
 BAD = {"NOT_FOUND", "WRONG_LINES", "FILE_MISSING", "UNSUPPORTED_TYPE", "MALFORMED", "OUTSIDE_ROOT", "ORPHAN_REF"}
 
@@ -69,7 +74,8 @@ def check_page(root, page):
         target = (root / p).resolve()
         in_raw = target.is_relative_to((root / "raw").resolve())
         is_chat = (target.parent == (root / "_wikifier").resolve()
-                   and CHAT_NAME.match(target.name) is not None)
+                   and (CHAT_NAME.match(target.name) is not None
+                        or ATTACH_NAME.match(target.name) is not None))
         if not (in_raw or is_chat):
             out.append(("OUTSIDE_ROOT", rel, tag, str(p)))
             continue

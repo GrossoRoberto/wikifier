@@ -14,10 +14,11 @@ Layout taken from the project's SCHEMA v2.1, tested on the field with the filesy
 └── _wikifier/        system folder, NO subfolders (ignored by index, ingest and the alignment check, like `trash/`)
 ```
 
-`_wikifier/` holds two kinds of files, told apart by the word after the date:
+`_wikifier/` holds three kinds of files, told apart by the word after the date:
 - `YYYY-MM-DD_chat-<topic>.md`: chat extracts written by `wiki-update`. They are sources: never edited afterwards, cited by pages.
+- `YYYY-MM-DD_allegato-<topic>--<original-name>.<ext>`: chat attachments written by `wiki-update` (files generated during that chat, copied as they are). Same date and topic as their extract. They are sources: never edited afterwards, may be cited, searched by `wiki-dig`.
 - `YYYY-MM-DD_<type>-<topic>.md` with type `piano-ingest`, `piano-update`, `piano-delete`, `audit` or `check`: plans and reports, ONLY when the user asks to save them. They are not sources: never cited.
-The word `chat` is reserved for extracts.
+The word `chat` is reserved for extracts and the word `allegato` for attachments.
 
 The whole tree above is created by `wiki-init` (empty folders). `_wikifier/` is a required item: a wiki created before it existed is state S2 until `wiki-check err` adds it. No other file or folder may be created in the wiki root. Plans and reports are shown in the chat.
 
@@ -29,6 +30,17 @@ Rules: `raw/` sources live in folders named `YYYY-MM-DD_short-description/`. `wi
 ## Chat extracts
 
 `wiki-update` saves what it records from a conversation as `_wikifier/YYYY-MM-DD_chat-<topic>.md` (verbatim extract of the relevant messages only; if the name exists add `-2`). NEVER in `raw/`, which no command writes to. After writing, the file is not edited again; it is cited with verbatim quotes and line locators, listed in the index section "Estratti di chat", and has its own source page `wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`. Log entries: `## [date] update | chat: <topic>` including `Coperto fino a: ...`. A correction of an earlier value keeps its history with `> 🔄 CORRETTO (date): old[^a] → new[^b]`.
+
+## Chat attachments
+
+Files that Claude generated or rewrote during the chat (notes, reports, analyses, lists, code in any language, HTML, JSON, config) are the densest part of a session and an extract of the messages does not contain them. `wiki-update` saves the latest version of each one next to its extract:
+
+- Name: `_wikifier/YYYY-MM-DD_allegato-<topic>--<original-name>.<ext>`. `<topic>` is the extract's topic, `--` separates it from the original file name (lowercased, spaces turned into hyphens), and the original extension is kept so the file still opens as what it is. If the name exists add `-2` before the extension.
+- Content: the file as it is, never rewritten, summarized or "cleaned". Copy it with a tool that transfers the file unchanged; see `cmd-update.md` step 6 ("Save the attachments") for the copy rule and how to mark a copy that could not be verified.
+- Not saved: files the user uploaded to the chat (the user still has them: list them in the source page instead), binary files (list them), intermediate versions, and any file holding secrets (passwords, tokens, keys).
+- After writing, never edited again.
+- Role: a **safety net**, not the primary knowledge. What matters is distilled into pages as usual; attachments keep what distillation drops (reasons, discarded alternatives, intermediate data) so that it can still be found with `wiki-dig`. Pages do not have to link them.
+- Listed in `index.md` under their extract (see the format below) and in the "Allegati" section of the extract's source page, each with 2–3 lines on what it CONTAINS (topics, decisions, data), not just its name: a report with a vague title must still be findable.
 
 ## Saved plans and reports
 
@@ -43,6 +55,8 @@ Default: plans (ingest, update, delete) and reports (audit, check) are shown in 
 ## Source pages
 
 Each ingested raw source has ONE source page: `wiki/sorgenti/<raw-folder-name>.md` (category `sorgenti`, exempt from the 3-pages rule). It holds: a short summary, 3–7 key takeaways with citations, a "Pagine derivate" list linking the pages created or updated from that source, and what the source does not cover. Other pages link to it from their `sorgenti` field and footnotes' context. Frontmatter as usual (`categoria: sorgenti`).
+
+A chat extract's source page (`wiki/sorgenti/YYYY-MM-DD_chat-<topic>.md`) also has an "Allegati" section when attachments were saved: one entry per attachment with a relative link (`../../_wikifier/<file>`) and 2–3 lines on what it contains, plus a "Non salvati" line listing files the user uploaded and binary or secret-holding files that were left out. Without attachments the section says "nessuno".
 
 ## index.md format
 
@@ -63,9 +77,10 @@ Aggiornato: YYYY-MM-DD | Pagine totali: N | Sorgenti raw: N
 
 ## Estratti di chat
 - `_wikifier/YYYY-MM-DD_chat-topic.md` — description, recorded on: date
+  - allegato: `_wikifier/YYYY-MM-DD_allegato-topic--file.ext` — what it contains, in one line
 ```
 
-The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. A `.gitkeep` inside `_wikifier/` is not an extract or a report. The counts in the header refer to raw sources only.
+The section "Estratti di chat" is added by `wiki-update` the first time; the empty skeleton does not have it. Attachments are listed as indented `allegato:` lines under their extract. A `.gitkeep` inside `_wikifier/` is not an extract, an attachment or a report. The counts in the header refer to raw sources only.
 
 Empty skeleton (used by init): same header with `Pagine totali: 0 | Sorgenti raw: 0` and the section headings without entries.
 

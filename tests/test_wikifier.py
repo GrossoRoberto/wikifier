@@ -29,7 +29,7 @@ for f in list((SK/"references").glob("*.md")) + [SK/"SKILL.md", SCRIPT]:
 for f in (SK/"references").glob("*.md"):
     t = f.read_text(encoding="utf-8")
     check("192.168" not in t and "DatiLab" not in t, f"{f.name}: no personal data")
-for cmd in ("ingest", "audit", "delete", "query", "update"):
+for cmd in ("ingest", "audit", "delete", "query", "update", "dig"):
     check(f"cmd-{cmd}.md" in txt and "not implemented" not in
           [l for l in txt.splitlines() if f"`wiki-{cmd}`" in l][0], f"SKILL.md routes wiki-{cmd}")
 
@@ -78,6 +78,13 @@ check("`_wikifier/`" in ini and "whole structure" in ini, "init creates the whol
 check("born from `wiki-ingest`" in txt and "`wiki-update`" in txt, "SKILL.md: how a wiki lives")
 check("required item" in st and "S2 until `wiki-check err`" in st, "structure: _wikifier required, migration via check err")
 
+dg = (SK/"references/cmd-dig.md").read_text()
+check("Writes nothing at all" in dg and "trash/" in dg and "scava" in dg and "`dig`" in pf_, "dig: read-only, scope, Italian triggers, preflight")
+check("_allegato-" in dg and "raw/" in dg and "After 5 files" in dg, "dig: searches attachments and raw, cost cap without shell")
+check("Chat attachments" in st and "allegato" in st and "safety net" in st, "structure: chat attachments")
+check("_allegato-<topic>--<original-name>" in up and "Copy, never retype" in up and "copia: manuale" in up, "update: attachments copied, unverified copies marked")
+check("| 14 |" in ck and "_allegato-" in ck, "check: orphan attachment row")
+check("wiki-dig" in qr, "query points to wiki-dig")
 check("Saved plans and reports" in st and "NOT an approval" in st and "piano-ingest" in st and "never overwrite" in st, "structure: saved plans/reports rules")
 check(all("Saved plans and reports" in (SK/"references"/f).read_text() for f in ("cmd-ingest.md","cmd-update.md","cmd-delete.md","cmd-audit.md")), "ingest/update/delete/audit point to the saved-report rules")
 
@@ -142,10 +149,14 @@ w = tmp/"vw"; (w/"wiki/cat").mkdir(parents=True); (w/"raw/2026-10-01_n").mkdir(p
 (w/"raw/2026-10-01_n/scan.pdf").write_bytes(b"%PDF-1.4")
 (w/"secret.md").write_text("Outside raw: nominal speed is 1450 rpm")
 (w/"_wikifier/chat").mkdir(parents=True); (w/"_wikifier/2026-10-10_chat-t.md").write_text("Intro\nDecision: use 1480 rpm as reference.\n"); (w/"_wikifier/chat/2026-10-10_old.md").write_text("Decision: use 1480 rpm as reference.\n"); (w/"_wikifier/2026-10-10_audit-all.md").write_text("Decision: use 1480 rpm as reference.\n")
+(w/"_wikifier/2026-10-10_allegato-t--report.md").write_text("# Report\nChosen pump B because of noise.\n")
+(w/"_wikifier/2026-10-10_allegato-t--calc.py").write_text("# calc\nRPM_REF = 1480  # agreed reference\n")
+(w/"_wikifier/2026-10-10_allegato-t-nodash.md").write_text("Chosen pump B because of noise.\n")
+(w/"_wikifier/chat/2026-10-10_allegato-t--old.md").write_text("Chosen pump B because of noise.\n")
 page = '''---
 titolo: P
 ---
-Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9] L ok.[^11] L wrong.[^12] L span.[^13] L range.[^14] Chat.[^15] Chat wrong.[^16] Wiki as source.[^17] Report as source.[^18] Legacy subfolder.[^19]
+Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Escape.[^6] Synth.[^7] Case.[^8] Orphan.[^9] L ok.[^11] L wrong.[^12] L span.[^13] L range.[^14] Chat.[^15] Chat wrong.[^16] Wiki as source.[^17] Report as source.[^18] Legacy subfolder.[^19] Att.[^20] Att code.[^21] Att lines.[^22] Att bad name.[^23] Att subfolder.[^24]
 
 [^1]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (line 2)
 [^2]: raw/2026-10-01_n/notes.md — "nominal speed is 1480 rpm" (line 2)
@@ -161,6 +172,11 @@ Ok whitespace.[^1] Wrong text.[^2] Missing file.[^3] Pdf.[^4] Bad shape.[^5] Esc
 [^17]: wiki/cat/p.md — "Ok whitespace" (L1)
 [^18]: _wikifier/2026-10-10_audit-all.md — "use 1480 rpm as reference" (L1)
 [^19]: _wikifier/chat/2026-10-10_old.md — "use 1480 rpm as reference" (L1)
+[^20]: _wikifier/2026-10-10_allegato-t--report.md — "Chosen pump B because of noise" (L2)
+[^21]: _wikifier/2026-10-10_allegato-t--calc.py — "RPM_REF = 1480" (L2)
+[^22]: _wikifier/2026-10-10_allegato-t--report.md — "Chosen pump B because of noise" (L1)
+[^23]: _wikifier/2026-10-10_allegato-t-nodash.md — "Chosen pump B because of noise" (L1)
+[^24]: _wikifier/chat/2026-10-10_allegato-t--old.md — "Chosen pump B because of noise" (L1)
 [^11]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (L4)
 [^12]: raw/2026-10-01_n/notes.md — "Service every 2000 hours" (section 3, L1-2)
 [^13]: raw/2026-10-01_n/notes.md — "Nominal speed is 1450 rpm" (L2-3)
@@ -172,7 +188,8 @@ r = run(w); got = {}; allst = {}
 for l in r.stdout.splitlines():
     s, _, tag, _ = l.split("\t", 3); got.setdefault(tag, s) if s != "UNUSED_DEF" else None; allst.setdefault(tag, set()).add(s)
 exp = {"[^1]":"OK","[^2]":"NOT_FOUND","[^3]":"FILE_MISSING","[^4]":"UNSUPPORTED_TYPE","[^5]":"MALFORMED",
-       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK","[^11]":"OK","[^12]":"WRONG_LINES","[^13]":"OK","[^14]":"WRONG_LINES","[^15]":"OK","[^16]":"WRONG_LINES","[^17]":"OUTSIDE_ROOT","[^18]":"OUTSIDE_ROOT","[^19]":"OUTSIDE_ROOT"}
+       "[^6]":"OUTSIDE_ROOT","[^7]":"SYNTHESIS_SKIPPED","[^8]":"NOT_FOUND","[^9]":"ORPHAN_REF","[^10]":"OK","[^11]":"OK","[^12]":"WRONG_LINES","[^13]":"OK","[^14]":"WRONG_LINES","[^15]":"OK","[^16]":"WRONG_LINES","[^17]":"OUTSIDE_ROOT","[^18]":"OUTSIDE_ROOT","[^19]":"OUTSIDE_ROOT",
+       "[^20]":"OK","[^21]":"OK","[^22]":"WRONG_LINES","[^23]":"OUTSIDE_ROOT","[^24]":"OUTSIDE_ROOT"}
 for k, v in exp.items(): check(got.get(k) == v, f"verify_quotes {k}: expected {v}, got {got.get(k)}")
 check("UNUSED_DEF" in allst["[^10]"], "unused definition flagged")
 check(r.returncode == 1, "exit 1 when blocking findings exist")

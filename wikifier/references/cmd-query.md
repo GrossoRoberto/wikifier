@@ -10,7 +10,7 @@ Answer a question in the chat, using ONLY what the wiki contains. Read-only: all
    - Every statement comes from a page you read. Name the page (path or title) after it.
    - When a page carries a footnote citation, you may mention the raw source it points to, without re-checking it.
    - Do not add knowledge from outside the wiki. If you must say something general, mark it clearly as "not from the wiki".
-4. **Say what the wiki does not cover.** If the answer is missing or partial, say so plainly ("the wiki does not say X"). Never fill gaps by guessing.
+4. **Say what the wiki does not cover.** If the answer is missing or partial, say so plainly ("the wiki does not say X"). Never fill gaps by guessing. When the missing part may sit in the sources (a reason, a date, a discarded option), suggest `wiki-dig` in one line; do not run it unasked.
 5. **Flag open items that touch the answer:** a `> ⚠️ CONTRADDIZIONE` block (give both values and their citations, never pick one), a `> ❓ DA VERIFICARE` item, or a page whose `stato` is not `verificato`.
 6. **If the index looked stale** (state S3: pages missing from `index.md`), say the answer may be incomplete and suggest `wiki-check`.
 
