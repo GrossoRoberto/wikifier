@@ -132,7 +132,8 @@ Provisional profile, called "v2.1" (`wikifier/references/structure-v21.md`); it 
 ├── log.md     append-only chronological log
 ├── raw/       immutable sources
 ├── wiki/      pages written and maintained by the LLM (max 2 levels)
-└── trash/     soft-delete bin
+├── trash/     soft-delete bin
+└── _wikifier/ system folder, flat: chat extracts, chat attachments, saved plans/reports
 ```
 
 Rules enforced by the skill: `raw/` content is never modified; nothing is ever deleted (it is moved to `trash/`); the skill only operates inside the configured root.
