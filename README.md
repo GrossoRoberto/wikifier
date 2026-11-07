@@ -21,7 +21,7 @@ Write them in natural language ("run wiki-check") or as an argument to the skill
 | `wiki-delete` | Soft-delete pages into `trash/` (plan approved first) | field-tested (Claude Code) |
 | `wiki-update` | Bring durable news from the current chat into the wiki (plan approved first; saves a verbatim chat extract in `_wikifier/`, plus the files generated in the chat as attachments, copied unchanged). Chats also suggest it at milestones | **beta** (written, sandbox-tested only; attachments new in v1.11) |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | field-tested (Claude Code) |
-| `wiki-dig` | Occasional deep search in the sources (chat extracts and attachments in `_wikifier/`, `raw/`) when the pages are not enough: "when did we decide X?", "why Y?". Writes nothing. Also triggered by "scava nella wiki", "storico" | **beta** (new in v1.11, written only) |
+| `wiki-dig` | Occasional deep search in the sources (chat extracts and attachments in `_wikifier/`, `raw/`) when the pages are not enough: "when did we decide X?", "why Y?". Writes nothing. Also triggered by "scava nella wiki", "storico della wiki" | **beta** (new in v1.11, written only) |
 
 Planned commands answer "not implemented yet" and stop; they do not improvise.
 
@@ -214,6 +214,6 @@ The skill was written from scratch from these descriptions; no code was copied. 
 - Se ne esistono più copie vale la prima in quest'ordine: Project knowledge, allegato, cartella di lancio.
 - Provato sul campo finora: solo l'allegato in chat su Desktop.
 
-**Novità v1.11:** `wiki-update` salva anche i file generati nella chat (report, appunti, codice, HTML) come allegati in `_wikifier/`, copiati senza modifiche; il nuovo comando `wiki-dig` ("scava nella wiki", "storico") li cerca insieme agli estratti e a `raw/` quando le pagine non bastano. Entrambi scritti e provati solo in sandbox.
+**Novità v1.11:** `wiki-update` salva anche i file generati nella chat (report, appunti, codice, HTML) come allegati in `_wikifier/`, copiati senza modifiche; il nuovo comando `wiki-dig` ("scava nella wiki", "storico della wiki") li cerca insieme agli estratti e a `raw/` quando le pagine non bastano. Entrambi scritti e provati solo in sandbox.
 
 **Limiti:** è una versione iniziale. Non sono ancora stati provati sul campo `wiki-check err`, `wiki-status`, gli stati S1 e S3, né l'uso su Pi. La struttura delle cartelle ("v2.1") è provvisoria.

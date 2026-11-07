@@ -1,6 +1,6 @@
 ---
 name: wikifier
-description: LLM wiki (Karpathy). Commands: wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest, wiki-update (this chat), wiki-query, wiki-dig (dig sources; scava, storico), wiki-audit, wiki-delete.
+description: LLM wiki (Karpathy). Commands: wiki-init, wiki-check, wiki-check err, wiki-status, wiki-ingest, wiki-update (this chat), wiki-query, wiki-dig (dig sources; scava), wiki-audit, wiki-delete.
 ---
 
 # Wikifier
@@ -26,7 +26,7 @@ The user writes commands in natural language ("wiki-check") or as a slash comman
 | `wiki-audit` | Read-only check of citations, uncited claims, contradictions | 3 | `references/cmd-audit.md` |
 | `wiki-update` | Bring durable news from THIS chat into the wiki (plan approved first; saves a chat extract and the files generated in the chat as attachments in `_wikifier/`). Beta | 2 | `references/cmd-update.md` |
 | `wiki-query` | Answer a question in the chat from the wiki only; writes nothing | 2 | `references/cmd-query.md` |
-| `wiki-dig` | Occasional deep search in the sources (`_wikifier/` extracts and attachments, `raw/`) when the pages are not enough; writes nothing. Also "scava nella wiki", "storico". Beta | 2 | `references/cmd-dig.md` |
+| `wiki-dig` | Occasional deep search in the sources (`_wikifier/` extracts and attachments, `raw/`) when the pages are not enough; writes nothing. Also "scava nella wiki", "storico della wiki". Beta | 2 | `references/cmd-dig.md` |
 | `wiki-delete` | Soft-delete pages: move them into `trash/`, fix index and links (plan approved first) | 3 | `references/cmd-delete.md` |
 
 `wiki-ingest` is only for folders already in `raw/`. Anything that happened in the chat goes through `wiki-update`, never through ingest.

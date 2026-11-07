@@ -2,7 +2,7 @@
 
 Deep search in the wiki's SOURCES, used now and then when the pages are not enough: "when did we decide X?", "why did we choose Y?", "are we sure about Z?". It is the safety net behind `wiki-query`: the pages hold distilled knowledge, the sources also hold what distillation dropped (reasons, discarded alternatives, intermediate data, the exact original wording). Read-only: allowed in S3/S4 (see `preflight.md`). Writes nothing at all: no page, no index change, no `log.md` entry, no file.
 
-Trigger phrases besides the command: "dig in the wiki", "wiki history", "deep search in the wiki"; Italian: "scava nella wiki", "storico", "ricerca approfondita nella wiki". Plain "deep search" or "ricerca approfondita" without the wiki is a web research request, not this command: ask if unsure.
+Trigger phrases besides the command: "dig in the wiki", "deep search in the wiki"; Italian: "scava nella wiki", "storico della wiki", "ricerca approfondita nella wiki". A bare "storico" or "history" is NOT a trigger. A request to see the log (`log.md`) is not this command either: ask if unsure. Plain "deep search" or "ricerca approfondita" without the wiki is a web research request, not this command: ask if unsure.
 
 ## Scope
 
